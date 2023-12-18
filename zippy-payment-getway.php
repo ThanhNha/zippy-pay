@@ -16,7 +16,7 @@
 
 namespace ZIPPY_Pay;
 
-use ZIPPY_Pay\Core\ZIPPY_Pay_Integration;
+use ZIPPY_Pay\Core\Adyen\ZIPPY_Adyen_Pay_Integration;
 
 define('ZIPPY_PAY_DIR_URL', plugin_dir_url( __FILE__ ));
 define('ZIPPY_PAY_DIR_PATH', plugin_dir_path( __FILE__ ));
@@ -30,6 +30,6 @@ require ZIPPY_PAY_DIR_PATH . '/vendor/autoload.php';
 require ZIPPY_PAY_DIR_PATH . '/includes/autoload.php';
 
 
-ZIPPY_Pay_Integration::get_instance();
+ZIPPY_Adyen_Pay_Integration::get_instance();
 
 

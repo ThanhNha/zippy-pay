@@ -1,25 +1,21 @@
 <?php
 
-namespace ZIPPY_Pay\Core;
+namespace ZIPPY_Pay\Core\Adyen;
 
-use ZIPPY_Pay\Authorization\ZIPPY_Pay_Authorization;
-// use WC_Order;
-use WC_Payment_Gateways;
-// use ZIPPY_Pay\Adyen\ZIPPY_Pay;
+use ZIPPY_Pay\Core\Adyen\ZIPPY_Adyen_Pay_Gateway;
 
-
-class ZIPPY_Pay_Integration
+class ZIPPY_Adyen_Pay_Integration
 {
 
     /**
      * The single instance of the class.
      *
-     * @var   ZIPPY_Pay_Integration
+     * @var   ZIPPY_Adyen_Pay_Integration
      */
     protected static $_instance = null;
 
     /**
-     * @return ZIPPY_Pay_Integration
+     * @return ZIPPY_Adyen_Pay_Integration
      */
     public static function get_instance()
     {
@@ -30,7 +26,7 @@ class ZIPPY_Pay_Integration
     }
 
     /**
-     * ZIPPY_Pay_Integration constructor.
+     * ZIPPY_Adyen_Pay_Integration constructor.
      */
     public function __construct()
     {
@@ -39,10 +35,7 @@ class ZIPPY_Pay_Integration
             return;
         }
         if (is_admin()) {
-            add_filter('woocommerce_get_settings_pages', function ($settings) {
-                $settings[] = include ZIPPY_PAY_DIR_PATH . '/authorization/zippy-pay-settings.php';
-                return $settings;
-            });
+            add_filter('woocommerce_get_settings_pages', [$this, 'setting_page']);
         }
 
         add_filter('woocommerce_payment_gateways', [$this, 'add_zippy_to_woocommerce']);
@@ -52,10 +45,15 @@ class ZIPPY_Pay_Integration
         add_action('admin_enqueue_scripts', [$this, 'admin_scripts_and_styles']);
 
     }
+    
+    public function setting_page($settings){
+            $settings[] = include ZIPPY_PAY_DIR_PATH . '/authorization/zippy-pay-settings.php';
+            return $settings;
+    }
 
     public function admin_scripts_and_styles()
     {
-        wp_enqueue_script('adyen-admin', ZIPPY_PAY_DIR_URL . 'assets/js/admin-adyen.js');
+        wp_enqueue_script('adyen-admin', ZIPPY_PAY_DIR_URL . 'includes/assets/js/admin-adyen.js');
     }
 
     public function scripts_and_styles()
@@ -65,16 +63,16 @@ class ZIPPY_Pay_Integration
             return;
         }
 
-        wp_enqueue_script('adyen-sdk', ZIPPY_PAY_DIR_URL . 'assets/js/adyen-live.min.js', [], '5.49.0', true);
-        wp_enqueue_style('adyen-css', ZIPPY_PAY_DIR_URL . 'assets/css/adyen.min.css', [], '5.49.0');
-        wp_enqueue_style('adyen-css-checkout', ZIPPY_PAY_DIR_URL . 'assets/css/checkout.css', [], '5.49.0');
+        wp_enqueue_script('adyen-sdk', ZIPPY_PAY_DIR_URL . 'includes/assets/js/adyen-live.min.js', [], '5.49.0', true);
+        wp_enqueue_style('adyen-css', ZIPPY_PAY_DIR_URL . 'includes/assets/css/adyen.min.css', [], '5.49.0');
+        wp_enqueue_style('adyen-css-checkout', ZIPPY_PAY_DIR_URL . 'includes/assets/css/checkout.css', [], '5.49.0');
     }
 
 
     public function add_zippy_to_woocommerce($gateways)
     {
 
-        $gateways[] = ZIPPY_Pay_Gateway::class;
+        $gateways[] = ZIPPY_Adyen_Pay_Gateway::class;
         return $gateways;
     }
 

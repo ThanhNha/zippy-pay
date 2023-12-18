@@ -1,6 +1,6 @@
 <?php
 
-/** @var \ZIPPY_Pay\Core\ZIPPY_Pay_Gateway $this */
+/** @var \ZIPPY_Pay\Core\ZIPPY_Adyen_Pay_Gateway $this */
 /** @var $action  */
 /** @var $return_url */ ?>
 

@@ -1,6 +1,6 @@
 <?php
 
-/** @var \ZIPPY_Pay\Core\ZIPPY_Pay_Gateway $this */ ?>
+/** @var \ZIPPY_Pay\Core\ZIPPY_Adyen_Pay_Gateway $this */ ?>
 <div id="zippy-container">
   <?php if (empty($configs)) : ?>
     <span class="has-error">We can not process the payment at the moment. Please, try again later.</span>

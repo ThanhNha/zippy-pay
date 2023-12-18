@@ -3,7 +3,7 @@
 namespace ZIPPY_Pay\Adyen;
 
 use Throwable;
-use ZIPPY_Pay\Core\ZIPPY_Pay_Api;
+use ZIPPY_Pay\Core\Adyen\ZIPPY_Adyen_Pay_Api;
 use ZIPPY_Pay\Core\ZIPPY_Pay_Core;
 use WC_Order;
 use Exception;
@@ -39,7 +39,7 @@ class ZIPPY_Pay_Adyen
 	public function get_token($url)
 	{
 
-		$token = ZIPPY_Pay_Api::get_token_from_zippy($url);
+		$token = ZIPPY_Adyen_Pay_Api::get_token_from_zippy($url);
 
 		return $token;
 	}
@@ -59,12 +59,12 @@ class ZIPPY_Pay_Adyen
 		try {
 			$payload = $this->build_payment_payload($order, $adyen_payment_data);
 
-			$result = ZIPPY_Pay_Api::checkout($url, $payload);
+			$result = ZIPPY_Adyen_Pay_Api::checkout($url, $payload);
 
 			if (is_numeric($result)) {
 				$token = $this->get_token($url, false);
 
-				$result = ZIPPY_Pay_Api::checkout($url, $payload, $token);
+				$result = ZIPPY_Adyen_Pay_Api::checkout($url, $payload, $token);
 			}
 			
 			if (!$result || !isset($result->Result)) {
@@ -94,11 +94,11 @@ class ZIPPY_Pay_Adyen
 			"updatedFrom" => $current_time
 		);
 		try {
-			$status = ZIPPY_Pay_Api::transactionStatus($url, $params);
+			$status = ZIPPY_Adyen_Pay_Api::transactionStatus($url, $params);
 
 			if (is_numeric($status)) {
 				$token = $this->get_token($url, false);
-				$status = ZIPPY_Pay_Api::transactionStatus($url, $params, $token);
+				$status = ZIPPY_Adyen_Pay_Api::transactionStatus($url, $params, $token);
 			}
 			if (!$status && !isset($status->result)) {
 				throw new Exception("Missing Transaction Status.");
@@ -119,10 +119,10 @@ class ZIPPY_Pay_Adyen
 	{
 		$url = WC_Admin_Settings::get_option(PREFIX .  '_base_url');
 		try {
-			$paymentConfig              = ZIPPY_Pay_Api::getConfigs($url);
+			$paymentConfig              = ZIPPY_Adyen_Pay_Api::getConfigs($url);
 			if (is_numeric($paymentConfig)) {
 				$token = $this->get_token($url, false);
-				$paymentConfig              = ZIPPY_Pay_Api::getConfigs($url, $token);
+				$paymentConfig              = ZIPPY_Adyen_Pay_Api::getConfigs($url, $token);
 			}
 			if (!$paymentConfig || !isset($paymentConfig->result)) {
 				throw new Exception("Missing Payment Configs.");

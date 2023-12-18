@@ -1,6 +1,6 @@
 <?php
 
-namespace ZIPPY_Pay\Core;
+namespace ZIPPY_Pay\Core\Adyen;
 
 use WC_Order;
 use WC_Payment_Gateway;
@@ -13,7 +13,7 @@ use WC_Admin_Settings;
 defined('ABSPATH') || exit;
 
 
-class ZIPPY_Pay_Gateway extends WC_Payment_Gateway
+class ZIPPY_Adyen_Pay_Gateway extends WC_Payment_Gateway
 {
 	/**
 	 * @var ZIPPY_Pay_Adyen_Config
@@ -34,7 +34,7 @@ class ZIPPY_Pay_Gateway extends WC_Payment_Gateway
 	private $secret_key;
 
 	/**
-	 * ZIPPY_Pay_Gateway constructor.
+	 * ZIPPY_Adyen_Pay_Gateway constructor.
 	 */
 	public function __construct()
 	{

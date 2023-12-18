@@ -1,15 +1,14 @@
 <?php
 
-namespace ZIPPY_Pay\Core;
+namespace ZIPPY_Pay\Core\Adyen;
 
-use PDO;
 use WC_Admin_Settings;
 use ZIPPY_Pay\Core\ZIPPY_Pay_Core;
 
 
 defined('ABSPATH') || exit;
 
-class ZIPPY_Pay_Api
+class ZIPPY_Adyen_Pay_Api
 {
 
   /*

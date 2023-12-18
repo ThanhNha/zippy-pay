@@ -1,0 +1,78 @@
+@media (max-width: 767px) {
+  .woocommerce-checkout #payment ul.payment_methods {
+    padding: 1em !important;
+  }
+  .woocommerce-checkout
+    #payment
+    .payment_box.payment_method_zippy_payment_getway {
+    padding: 10px 20px !important;
+  }
+}
+.popup_content {
+  background: #fff;
+}
+.popup_content h3 {
+  margin: 20px;
+}
+
+.adyen-checkout__voucher-result__actions {
+  margin: 0;
+  list-style: none;
+}
+.adyen-checkout__voucher-result__actions > li {
+  margin: 0 0 5px 0;
+}
+
+.adyen-checkout__button {
+  display: block;
+}
+
+.woocommerce-checkout
+  #payment
+  ul.payment_methods
+  li
+  img.adyen-checkout__card__cardNumber__brandIcon {
+  position: absolute;
+}
+.adyen-checkout__card__cvc__hint__wrapper {
+  margin: 0 10px;
+}
+
+.woocommerce-checkout #payment .adn-payment-dropdown {
+  width: 100%;
+  height: 35px;
+  background-color: transparent;
+  height: 40px;
+  background: 0 0;
+  padding: 5px;
+  cursor: pointer;
+}
+
+.woocommerce-checkout
+  #payment
+  #zippy-container
+  .adyen-checkout__card__brands
+  .adyen-checkout__card__brands__brand-wrapper {
+  display: flex;
+}
+.woocommerce-checkout
+  #payment
+  #zippy-container
+  .adyen-checkout__payment-method {
+  margin-bottom: 8px;
+}
+
+.woocommerce-checkout
+  #payment
+  #zippy-container
+  .adyen-checkout__field
+  .adyen-checkout__field__exp-date_hint_wrapper {
+  margin: 0 10px;
+}
+.woocommerce-checkout #payment #zippy-container img {
+  margin: 0;
+}
+.woocommerce-checkout #payment #zippy-container .has-error {
+  color: red;
+  font-size: 14px;
+}

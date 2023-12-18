@@ -5,7 +5,7 @@ namespace ZIPPY_Pay\Adyen;
 defined('ABSPATH') || exit;
 
 
-class ZIPPY_Pay_Config
+class ZIPPY_Pay_Adyen_Config
 {
 
 	/** @var string */
@@ -18,17 +18,6 @@ class ZIPPY_Pay_Config
 	private $base_url;
 	/** @var string */
 
-	/**
-	 * Adyen_Config constructor.
-	 *
-	 * @param array $settings
-	 */
-	public function __construct($settings)
-	{
-		$this->setEnvironment($settings['test_mode']);
-		$this->setMerchantId($settings['merchant_id']);
-		$this->setBaseUrl($settings['base_url']);
-	}
 
 	/**
 	 * @return string
@@ -41,7 +30,7 @@ class ZIPPY_Pay_Config
 	/**
 	 * @param string $base_url
 	 *
-	 * @return ZIPPY_Pay_Config
+	 * @return ZIPPY_Pay_Adyen_Config
 	 */
 	public function setBaseUrl($base_url)
 	{
@@ -62,7 +51,7 @@ class ZIPPY_Pay_Config
 	/**
 	 * @param string $test_mode
 	 *
-	 * @return ZIPPY_Pay_Config
+	 * @return ZIPPY_Pay_Adyen_Config
 	 */
 	public function setEnvironment($test_mode)
 	{
@@ -81,7 +70,7 @@ class ZIPPY_Pay_Config
 	/**
 	 * @param string $merchant_id
 	 *
-	 * @return ZIPPY_Pay_Config
+	 * @return ZIPPY_Pay_Adyen_Config
 	 */
 	public function setMerchantId($merchant_id)
 	{

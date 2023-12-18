@@ -4,8 +4,8 @@ namespace ZIPPY_Pay\Core;
 
 use WC_Order;
 use WC_Payment_Gateway;
-use ZIPPY_Pay\Adyen\ZIPPY_Pay;
-use ZIPPY_Pay\Adyen\ZIPPY_Pay_Config;
+use ZIPPY_Pay\Adyen\ZIPPY_Pay_Adyen;
+use ZIPPY_Pay\Adyen\ZIPPY_Pay_Adyen_Config;
 use ZIPPY_Pay\Core\ZIPPY_Pay_Core;
 use WC_Admin_Settings;
 
@@ -16,7 +16,7 @@ defined('ABSPATH') || exit;
 class ZIPPY_Pay_Gateway extends WC_Payment_Gateway
 {
 	/**
-	 * @var ZIPPY_Pay_Config
+	 * @var ZIPPY_Pay_Adyen_Config
 	 */
 	private $zippyConfigs;
 	/**
@@ -39,19 +39,19 @@ class ZIPPY_Pay_Gateway extends WC_Payment_Gateway
 	public function __construct()
 	{
 		$this->id           =  PAYMENT_ID;
-		$this->method_title = __(PAYMENT_NAME, PREFIX . '_woocommerce');
+		$this->method_title = __(PAYMENT_ADYEN_NAME, PREFIX . '_woocommerce');
 		$this->has_fields   = true;
 		$this->init_form_fields();
 		$this->init_settings();
 		// $this->supports = ['refunds'];// not support refunds
-		$this->title = PAYMENT_NAME;
+		$this->title = PAYMENT_ADYEN_NAME;
 		$this->method_description = __('', PREFIX . '_woocommerce');
 		$this->enabled         = $this->get_option('enabled');
 		$this->merchant_id     = trim(WC_Admin_Settings::get_option(PREFIX . '_merchant_id'));
 		$this->secret_key      = trim(WC_Admin_Settings::get_option(PREFIX . '_secret_key'));
 		$this->base_url        = trim(WC_Admin_Settings::get_option(PREFIX .  '_base_url'));
 		$this->test_mode       = WC_Admin_Settings::get_option(PREFIX .  '_test_mode');
-		$this->zippyConfigs = new ZIPPY_Pay_Config($this->settings);
+		$this->zippyConfigs = new ZIPPY_Pay_Adyen_Config($this->settings);
 		add_action('woocommerce_update_options_payment_gateways_' . $this->id, [$this, 'process_admin_options']);
 		add_action('woocommerce_receipt_' . $this->id, [$this, 'receipt_page']);
 		add_action('woocommerce_api_wc_zippy_redirect', [$this, 'handle_payment_redirect']);
@@ -66,9 +66,9 @@ class ZIPPY_Pay_Gateway extends WC_Payment_Gateway
 
 		$this->form_fields = [
 			'enabled'         => [
-				'title'   => __('Enable ' . PAYMENT_NAME, PREFIX . '_woocommerce'),
+				'title'   => __('Enable ' . PAYMENT_ADYEN_NAME, PREFIX . '_woocommerce'),
 				'type'    => 'checkbox',
-				'label'   => __('Enable ' . PAYMENT_NAME, PREFIX . '_woocommerce'),
+				'label'   => __('Enable ' . PAYMENT_ADYEN_NAME, PREFIX . '_woocommerce'),
 				'default' => 'no'
 			],
 			'sep'   => ZIPPY_Pay_Core::separator(),
@@ -88,9 +88,9 @@ class ZIPPY_Pay_Gateway extends WC_Payment_Gateway
 	{
 		if ($this->is_available()) {
 
-			$configs = (new ZIPPY_Pay($this->zippyConfigs))->get_payment_config($this->base_url);
+			$configs = (new ZIPPY_Pay_Adyen($this->zippyConfigs))->get_payment_config($this->base_url);
 
-			include_once ZIPPY_PAY_DIR_PATH . 'core/templates/payment-fields.php';
+			include_once ZIPPY_PAY_DIR_PATH . 'core/templates/adyen/payment-fields.php';
 		}
 	}
 
@@ -103,7 +103,7 @@ class ZIPPY_Pay_Gateway extends WC_Payment_Gateway
 
 		$order              = new WC_Order($order_id);
 		$adyen_payment_data = $this->get_adyen_payment_data();
-		$zippy              = new ZIPPY_Pay($this->zippyConfigs);
+		$zippy              = new ZIPPY_Pay_Adyen($this->zippyConfigs);
 		$result = $zippy->pay($order, $adyen_payment_data);
 
 		// Failed Payment
@@ -220,7 +220,7 @@ class ZIPPY_Pay_Gateway extends WC_Payment_Gateway
 		update_post_meta((int) $order_id, '_woocommerce_zippy_pay_data', $result);
 
 		$order->payment_complete();
-		$order->add_order_note(sprintf(__('Payment was complete via ' . PAYMENT_NAME, PREFIX . '_woocommerce')));
+		$order->add_order_note(sprintf(__('Payment was complete via ' . PAYMENT_ADYEN_NAME, PREFIX . '_woocommerce')));
 
 		return [
 			'result'   => 'success',
@@ -242,7 +242,7 @@ class ZIPPY_Pay_Gateway extends WC_Payment_Gateway
 		$endpoint = add_query_arg('wc-api', 'wc_adyen_redirect', trailingslashit(get_home_url()));
 		$return_url = add_query_arg('order_id', $order_id, $endpoint);
 
-		include_once ZIPPY_PAY_DIR_PATH . 'core/templates/form-redirect.php';
+		include_once ZIPPY_PAY_DIR_PATH . 'core/templates/adyen/form-redirect.php';
 	}
 
 	private function handle_redirect($result, $order)
@@ -292,7 +292,7 @@ class ZIPPY_Pay_Gateway extends WC_Payment_Gateway
 	 */
 	private function handle_get_transaction_status($order)
 	{
-		$zippy     = new ZIPPY_Pay($this->zippyConfigs);
+		$zippy     = new ZIPPY_Pay_Adyen($this->zippyConfigs);
 		$order_key = $order->get_order_key();
 
 		for ($i = 0; $i < 2; $i++) {
@@ -326,7 +326,7 @@ class ZIPPY_Pay_Gateway extends WC_Payment_Gateway
 
 			delete_option('zippy_redirect_object_' .	$order_id);
 
-			$order->add_order_note(sprintf(__('Payment was complete via ' . PAYMENT_NAME, PREFIX . '_woocommerce')));
+			$order->add_order_note(sprintf(__('Payment was complete via ' . PAYMENT_ADYEN_NAME, PREFIX . '_woocommerce')));
 
 			$order->payment_complete();
 

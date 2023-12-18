@@ -5,7 +5,7 @@ namespace ZIPPY_Pay\Adyen;
 
 use WC_Logger;
 
-class ZIPPY_Pay_Logger
+class ZIPPY_Pay_Adyen_Logger
 {
 
 	public static $logger;

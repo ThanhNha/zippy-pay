@@ -55,7 +55,7 @@ class ZIPPY_Pay_Integration
 
     public function admin_scripts_and_styles()
     {
-        wp_enqueue_script('adyen-admin', ZIPPY_PAY_DIR_URL . 'includes/assets/js/admin-adyen.js');
+        wp_enqueue_script('adyen-admin', ZIPPY_PAY_DIR_URL . 'assets/js/admin-adyen.js');
     }
 
     public function scripts_and_styles()
@@ -65,9 +65,9 @@ class ZIPPY_Pay_Integration
             return;
         }
 
-        wp_enqueue_script('adyen-sdk', ZIPPY_PAY_DIR_URL . 'includes/assets/js/adyen-live.min.js', [], '5.49.0', true);
-        wp_enqueue_style('adyen-css', ZIPPY_PAY_DIR_URL . 'includes/assets/css/adyen.min.css', [], '5.49.0');
-        wp_enqueue_style('adyen-css-checkout', ZIPPY_PAY_DIR_URL . 'includes/assets/css/checkout.css', [], '5.49.0');
+        wp_enqueue_script('adyen-sdk', ZIPPY_PAY_DIR_URL . 'assets/js/adyen-live.min.js', [], '5.49.0', true);
+        wp_enqueue_style('adyen-css', ZIPPY_PAY_DIR_URL . 'assets/css/adyen.min.css', [], '5.49.0');
+        wp_enqueue_style('adyen-css-checkout', ZIPPY_PAY_DIR_URL . 'assets/css/checkout.css', [], '5.49.0');
     }
 
 

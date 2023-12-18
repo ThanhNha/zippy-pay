@@ -7,20 +7,20 @@ use ZIPPY_Pay\Core\ZIPPY_Pay_Api;
 use ZIPPY_Pay\Core\ZIPPY_Pay_Core;
 use WC_Order;
 use Exception;
-use ZIPPY_Pay\Adyen\ZIPPY_Pay_Logger;
+use ZIPPY_Pay\Adyen\ZIPPY_Pay_Adyen_Logger;
 use WC_Admin_Settings;
 
-class ZIPPY_Pay
+class ZIPPY_Pay_Adyen
 {
 	/**
-	 * @var ZIPPY_Pay_Config
+	 * @var ZIPPY_Pay_Adyen_Config
 	 */
 	private $adyenConfig;
 
 	/**
 	 * Adyen constructor.
 	 *
-	 * @param ZIPPY_Pay_Config $adyenConfig
+	 * @param ZIPPY_Pay_Adyen_Config $adyenConfig
 	 */
 	public function __construct($adyenConfig)
 	{
@@ -71,7 +71,7 @@ class ZIPPY_Pay
 				throw new Exception("Checkout Order Failed.");
 			};
 		} catch (Throwable $exception) {
-			ZIPPY_Pay_Logger::log_checkout($exception->getMessage(), $payload);
+			ZIPPY_Pay_Adyen_Logger::log_checkout($exception->getMessage(), $payload);
 			return [];
 		}
 		return $result;
@@ -104,7 +104,7 @@ class ZIPPY_Pay
 				throw new Exception("Missing Transaction Status.");
 			}
 		} catch (Throwable $exception) {
-			ZIPPY_Pay_Logger::log($exception->getMessage());
+			ZIPPY_Pay_Adyen_Logger::log($exception->getMessage());
 			return [];
 		}
 		return $status;
@@ -128,7 +128,7 @@ class ZIPPY_Pay
 				throw new Exception("Missing Payment Configs.");
 			}
 		} catch (Throwable $exception) {
-			ZIPPY_Pay_Logger::log($exception->getMessage());
+			ZIPPY_Pay_Adyen_Logger::log($exception->getMessage());
 			return [];
 		}
 

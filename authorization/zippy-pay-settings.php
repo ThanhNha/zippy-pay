@@ -200,7 +200,7 @@ class ZIPPY_Pay_Settings extends WC_Settings_Page
 
     );
 
-    echo ZIPPY_Pay_Core::get_template('section-fields.php', [
+    echo ZIPPY_Pay_Core::get_template('adyen/section-fields.php', [
       'params' => $params,
     ], dirname(__FILE__), '/templates');
   }

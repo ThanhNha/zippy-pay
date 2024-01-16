@@ -39,7 +39,7 @@ class ZIPPY_Adyen_Pay_Integration
         }
 
         add_filter('woocommerce_payment_gateways', [$this, 'add_zippy_to_woocommerce']);
-        add_action('plugins_loaded', [$this, 'init_zippy_payment_gateway']);
+        // add_action('plugins_loaded', [$this, 'init_zippy_payment_gateway']);
         add_action('plugins_loaded', [$this, 'zippy_payment_load_plugin_textdomain']);
         add_action('wp_enqueue_scripts', [$this, 'scripts_and_styles']);
         add_action('admin_enqueue_scripts', [$this, 'admin_scripts_and_styles']);
@@ -47,7 +47,7 @@ class ZIPPY_Adyen_Pay_Integration
     }
     
     public function setting_page($settings){
-            $settings[] = include ZIPPY_PAY_DIR_PATH . '/authorization/zippy-pay-settings.php';
+            $settings[] = include ZIPPY_PAY_DIR_PATH . '/settings/zippy-pay-settings.php';
             return $settings;
     }
 
@@ -78,7 +78,7 @@ class ZIPPY_Adyen_Pay_Integration
 
     public function init_zippy_payment_gateway()
     {
-        include plugin_dir_path(__FILE__) . '/zippy-pay-gateway.php';
+        include ZIPPY_PAY_DIR_PATH . '/zippy-payment-getway.php';
     }
 
     public function zippy_payment_load_plugin_textdomain()

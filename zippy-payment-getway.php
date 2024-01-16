@@ -3,7 +3,7 @@
  * Plugin Name:       Zippy Pay
  * Plugin URI:
  * Description:       Accept adyen payments on your WooCommerce shop
- * Version:           1.0.0
+ * Version:           2.0.0
  * WC requires at least: 3.0
  * WC tested up to: 6.7
  * Author:            Zippy
@@ -20,8 +20,9 @@ use ZIPPY_Pay\Core\Adyen\ZIPPY_Adyen_Pay_Integration;
 
 define('ZIPPY_PAY_DIR_URL', plugin_dir_url( __FILE__ ));
 define('ZIPPY_PAY_DIR_PATH', plugin_dir_path( __FILE__ ));
+define('ZIPPY_PAY_ENDPOINT', plugin_dir_path( __FILE__ ));
 define('PGAWC_VERSION', '1.0.0');
-define('PAYMENT_ADYEN_NAME', 'Online Payment');
+define('PAYMENT_ADYEN_NAME', 'EPOSPay');
 define('PREFIX', 'zippy_payment_getway');
 define('PAYMENT_ID', 'zippy_pay');
 

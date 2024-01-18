@@ -76,3 +76,24 @@
   color: red;
   font-size: 14px;
 }
+
+/* Paynow Css  */
+
+.woocommerce-checkout
+  #payment
+  ul.payment_methods
+  .wc_payment_method.payment_method_zippy_paynow_payment
+  img {
+  display: block !important;
+  width: 100px !important;
+  height: 20px !important;
+  margin: 0px !important;
+}
+
+.woocommerce-checkout
+  #payment
+  ul.payment_methods
+  .wc_payment_method.payment_method_zippy_paynow_payment label{
+    color: transparent !important;
+    font-size: 0px !important;
+  }

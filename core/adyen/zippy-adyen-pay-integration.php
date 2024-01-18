@@ -34,26 +34,20 @@ class ZIPPY_Adyen_Pay_Integration
         if (!$this->is_woocommerce_active()) {
             return;
         }
-        if (is_admin()) {
-            add_filter('woocommerce_get_settings_pages', [$this, 'setting_page']);
-        }
+        add_filter('woocommerce_get_settings_pages', [$this, 'setting_page']);
 
         add_filter('woocommerce_payment_gateways', [$this, 'add_zippy_to_woocommerce']);
         // add_action('plugins_loaded', [$this, 'init_zippy_payment_gateway']);
         add_action('plugins_loaded', [$this, 'zippy_payment_load_plugin_textdomain']);
         add_action('wp_enqueue_scripts', [$this, 'scripts_and_styles']);
-        add_action('admin_enqueue_scripts', [$this, 'admin_scripts_and_styles']);
+        // add_action('admin_enqueue_scripts', [$this, 'admin_scripts_and_styles']);
 
     }
-    
-    public function setting_page($settings){
-            $settings[] = include ZIPPY_PAY_DIR_PATH . '/settings/zippy-pay-settings.php';
-            return $settings;
-    }
 
-    public function admin_scripts_and_styles()
+    public function setting_page($settings)
     {
-        wp_enqueue_script('adyen-admin', ZIPPY_PAY_DIR_URL . 'includes/assets/js/admin-adyen.js');
+        $settings[] = include ZIPPY_PAY_DIR_PATH . '/settings/zippy-pay-settings.php';
+        return $settings;
     }
 
     public function scripts_and_styles()

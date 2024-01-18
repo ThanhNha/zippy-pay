@@ -38,7 +38,7 @@ class ZIPPY_Adyen_Pay_Gateway extends WC_Payment_Gateway
 	 */
 	public function __construct()
 	{
-		$this->id           =  PAYMENT_ID;
+		$this->id           =  PAYMENT_ADYEN_ID;
 		$this->method_title = __(PAYMENT_ADYEN_NAME, PREFIX . '_woocommerce');
 		$this->has_fields   = true;
 		$this->init_form_fields();

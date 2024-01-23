@@ -57,6 +57,11 @@
 }
 .woocommerce-checkout
   #payment
+  #zippy-container iframe{
+    min-height: auto !important;
+  }
+.woocommerce-checkout
+  #payment
   #zippy-container
   .adyen-checkout__payment-method {
   margin-bottom: 8px;

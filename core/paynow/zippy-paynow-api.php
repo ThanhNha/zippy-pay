@@ -2,16 +2,11 @@
 
 namespace ZIPPY_Pay\Core\Paynow;
 
-use stdClass;
-
 defined('ABSPATH') || exit;
 
-
-defined('ABSPATH') || exit;
-
-class ZIPPY_Adyen_Pay_Api
+class ZIPPY_Paynow_Api
 {
-  public function GetConfig()
+  public static function GetConfig()
   {
     $response = '{
       "status": 1,
@@ -61,6 +56,6 @@ class ZIPPY_Adyen_Pay_Api
           }
       }
   }';
-    return  $response;
+    return  json_decode($response);
   }
 }

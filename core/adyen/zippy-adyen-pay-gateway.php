@@ -39,18 +39,18 @@ class ZIPPY_Adyen_Pay_Gateway extends WC_Payment_Gateway
 	public function __construct()
 	{
 		$this->id           =  PAYMENT_ADYEN_ID;
-		$this->method_title = __(PAYMENT_ADYEN_NAME, PREFIX . '_woocommerce');
+		$this->method_title = __(PAYMENT_ADYEN_NAME, PREFIX . '_zippy_payment');
 		$this->has_fields   = true;
 		$this->init_form_fields();
 		$this->init_settings();
 		// $this->supports = ['refunds'];// not support refunds
 		$this->title = PAYMENT_ADYEN_NAME;
-		$this->method_description = __('', PREFIX . '_woocommerce');
+		$this->method_description = __('', PREFIX . '_zippy_payment');
 		$this->enabled         = $this->get_option('enabled');
 		$this->merchant_id     = trim(WC_Admin_Settings::get_option(PREFIX . '_merchant_id'));
 		$this->secret_key      = trim(WC_Admin_Settings::get_option(PREFIX . '_secret_key'));
 		$this->base_url        = trim(WC_Admin_Settings::get_option(PREFIX .  '_base_url'));
-		$this->test_mode       = WC_Admin_Settings::get_option(PREFIX .  '_test_mode');
+		// $this->test_mode       = WC_Admin_Settings::get_option(PREFIX .  '_test_mode');
 		$this->zippyConfigs = new ZIPPY_Pay_Adyen_Config($this->settings);
 		add_action('woocommerce_update_options_payment_gateways_' . $this->id, [$this, 'process_admin_options']);
 		add_action('woocommerce_receipt_' . $this->id, [$this, 'receipt_page']);
@@ -64,15 +64,16 @@ class ZIPPY_Adyen_Pay_Gateway extends WC_Payment_Gateway
 	public function init_form_fields()
 	{
 
-		$this->form_fields = [
-			'enabled'         => [
-				'title'   => __('Enable ' . PAYMENT_ADYEN_NAME, PREFIX . '_woocommerce'),
-				'type'    => 'checkbox',
-				'label'   => __('Enable ' . PAYMENT_ADYEN_NAME, PREFIX . '_woocommerce'),
-				'default' => 'no'
-			],
-			'sep'   => ZIPPY_Pay_Core::separator(),
-		];
+		$this->form_fields = array(
+			'enabled'         => array(
+			'title'   => __('Enable ' . PAYMENT_ADYEN_NAME, PREFIX . '_zippy_payment'),
+			'type'    => 'checkbox',
+			'label'   => __('Enable ' . PAYMENT_ADYEN_NAME, PREFIX . '_zippy_payment'),
+			'default' => 'no'
+			));
+
+			// 'sep'   => ZIPPY_Pay_Core::separator(),
+		
 	}
 
 	public function is_available()
@@ -220,7 +221,7 @@ class ZIPPY_Adyen_Pay_Gateway extends WC_Payment_Gateway
 		update_post_meta((int) $order_id, '_woocommerce_zippy_pay_data', $result);
 
 		$order->payment_complete();
-		$order->add_order_note(sprintf(__('Payment was complete via ' . PAYMENT_ADYEN_NAME, PREFIX . '_woocommerce')));
+		$order->add_order_note(sprintf(__('Payment was complete via ' . PAYMENT_ADYEN_NAME, PREFIX . '_zippy_payment')));
 
 		return [
 			'result'   => 'success',
@@ -326,7 +327,7 @@ class ZIPPY_Adyen_Pay_Gateway extends WC_Payment_Gateway
 
 			delete_option('zippy_redirect_object_' .	$order_id);
 
-			$order->add_order_note(sprintf(__('Payment was complete via ' . PAYMENT_ADYEN_NAME, PREFIX . '_woocommerce')));
+			$order->add_order_note(sprintf(__('Payment was complete via ' . PAYMENT_ADYEN_NAME, PREFIX . '_zippy_payment')));
 
 			$order->payment_complete();
 
@@ -360,8 +361,8 @@ class ZIPPY_Adyen_Pay_Gateway extends WC_Payment_Gateway
 	private function is_gateway_configured()
 	{
 
-		if ($this->enabled === 'yes' && $this->base_url != '') {
-			return ($this->base_url &&  $this->merchant_id && $this->secret_key);
+		if ($this->enabled === 'yes') {
+			return ($this->merchant_id && $this->secret_key);
 		}
 
 		return false;
@@ -369,6 +370,6 @@ class ZIPPY_Adyen_Pay_Gateway extends WC_Payment_Gateway
 
 	private function add_notice()
 	{
-		return	wc_add_notice(__('Something went wrong with the payment. Please try again using another Credit / Debit Card.', PREFIX . '_woocommerce'), 'error');
+		return	wc_add_notice(__('Something went wrong with the payment. Please try again using another Credit / Debit Card.', PREFIX . '_zippy_payment'), 'error');
 	}
 }

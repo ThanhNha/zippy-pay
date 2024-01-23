@@ -76,7 +76,7 @@ class ZIPPY_Adyen_Pay_Api
   public static function getConfigs($url = '', $token = '')
   {
 
-    $token = empty($token) ? $_COOKIE['access_token'] : $token;
+    $token = empty($token) && isset($_COOKIE['access_token']) ? $_COOKIE['access_token'] : $token;
 
     $path = '/v1/payment/adyen/ecommerce/config';
 

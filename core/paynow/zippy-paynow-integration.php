@@ -3,6 +3,9 @@
 namespace ZIPPY_Pay\Core\Paynow;
 
 use ZIPPY_Pay\Core\Paynow\ZIPPY_Paynow_Gateway;
+use WC_Payment_Gateways;
+use ZIPPY_Pay\Settings\ZIPPY_Pay_Settings;
+use WC_Settings_Page;
 
 class ZIPPY_Paynow_Integration
 {
@@ -35,32 +38,10 @@ class ZIPPY_Paynow_Integration
             return;
         }
 
-        add_filter('woocommerce_payment_gateways', [$this, 'add_zippy_paynow_to_woocommerce']);
-        // add_action('plugins_loaded', [$this, 'init_zippy_payment_gateway']);
-        add_action('plugins_loaded', [$this, 'zippy_paynow_load_plugin_textdomain']);
-        // add_action('wp_enqueue_scripts', [$this, 'scripts_and_styles']);
-        // add_action('admin_enqueue_scripts', [$this, 'admin_scripts_and_styles']);
+        add_filter('woocommerce_payment_gateways',  array($this, 'add_zippy_paynow_to_woocommerce'));
+        add_action('plugins_loaded',  array($this, 'zippy_paynow_load_plugin_textdomain'));
 
     }
-
-    public function setting_page($settings)
-    {
-        $settings[] = include ZIPPY_PAY_DIR_PATH . '/settings/zippy-pay-settings.php';
-        return $settings;
-    }
-
-    public function scripts_and_styles()
-    {
-
-        if (!is_checkout()) {
-            return;
-        }
-
-        wp_enqueue_script('adyen-sdk', ZIPPY_PAY_DIR_URL . 'includes/assets/js/adyen-live.min.js', [], '5.49.0', true);
-        wp_enqueue_style('adyen-css', ZIPPY_PAY_DIR_URL . 'includes/assets/css/adyen.min.css', [], '5.49.0');
-        wp_enqueue_style('adyen-css-checkout', ZIPPY_PAY_DIR_URL . 'includes/assets/css/checkout.css', [], '5.49.0');
-    }
-
 
     public function add_zippy_paynow_to_woocommerce($gateways)
     {

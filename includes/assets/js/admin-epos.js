@@ -1,27 +1,26 @@
-jQuery(document).ready(function () {
-  var $active_plugin = jQuery("#zippy_payment_getway_test_mode");
+"use strict";
+$ = jQuery;
+$(document).ready(function () {
+  var $active_credit_card = $("#woocommerce_zippy_adyen_payment_settings");
+  var $active_paynow = $("#woocommerce_zippy_paynow_payment_settings");
+  var $zippy_setting_wrapper = $("#zippy_setting_wrapper");
 
-  // if (!$active_plugin.is(":checked")) {
-  //   zippy_hide_config_inputs();
-  // }
+  function toggleCreditCardSection() {
+    if ($active_credit_card.is(":checked") || $active_paynow.is(":checked")) {
+      $zippy_setting_wrapper.fadeIn();
+    } else {
+      $zippy_setting_wrapper.fadeOut();
+    }
+  }
 
-  // $active_plugin.change(function () {
-  //   if (!this.checked) {
-  //     zippy_hide_config_inputs();
-  //   } else {
-  //     jQuery("#zippy_payment_getway_merchant_id").prop("disabled", false);
+  toggleCreditCardSection(); // Initial state
 
-  //     jQuery("#zippy_payment_getway_base_url").prop("disabled", false);
-
-  //     jQuery("#zippy_payment_getway_secret_key").prop("disabled", false);
-  //   }
-  // });
-
-  // function zippy_hide_config_inputs() {
-  //   jQuery("#zippy_payment_getway_merchant_id").prop("disabled", true);
-  //   jQuery("#zippy_payment_getway_base_url").prop("disabled", true);
-  //   jQuery("#zippy_payment_getway_secret_key").prop("disabled", true);
-  // }
+  $active_credit_card.change(function () {
+    toggleCreditCardSection();
+  });
+  $active_paynow.change(function () {
+    toggleCreditCardSection();
+  });
 
   // const btn_authorization = $("#zippy_authorization_button");
   // if (btn_authorization.length) {

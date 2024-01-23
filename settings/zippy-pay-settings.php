@@ -6,7 +6,7 @@ use WC_Settings_Page;
 use WC_Admin_Settings;
 use ZIPPY_Pay\Core\ZIPPY_Pay_Core;
 use WC_Payment_Gateways;
-use ZIPPY_Pay\Settings\ZIPPY_Field_Settings;
+use ZIPPY_Pay\Settings\ZIPPY_Fields_Setting;
 
 
 defined('ABSPATH') || exit;
@@ -67,6 +67,10 @@ class ZIPPY_Pay_Settings extends WC_Settings_Page
   public function get_settings($section = null)
   {
 
+    $id_paynow_field = 'woocommerce_' . PAYMENT_PAYNOW_ID . '_settings';
+
+    $id_adyen_field = 'woocommerce_' .  PAYMENT_ADYEN_ID . '_settings';
+
     switch ($section) {
 
       case 'zippy_credit_card':
@@ -79,7 +83,8 @@ class ZIPPY_Pay_Settings extends WC_Settings_Page
             'type'    => 'checkbox',
             'label'   => __('Enable EPOSPay Credit Card', PREFIX . 'zippy-settings-tab'),
             'default' => 'no',
-            'id'       => PREFIX . 'enable_credit_card_section'
+            'id'      =>  $id_adyen_field,
+            'value'   => $this->get_status_payment($id_adyen_field)
           ),
           'zippy_credit_card_field'         => array(
             'id'       => 'zippy_credit_card_field',
@@ -105,7 +110,8 @@ class ZIPPY_Pay_Settings extends WC_Settings_Page
             'type'    => 'checkbox',
             'label'   => __('Enable EPOSPay Paynow', PREFIX . 'zippy-settings-tab'),
             'default' => 'no',
-            'id'       => PREFIX . 'enable_paynow'
+            'id'      => $id_paynow_field,
+            'value'   => $this->get_status_payment($id_paynow_field)
           ),
           'zippy_paynow_field' => array(
             'id'        => 'zippy_paynow_field',
@@ -215,13 +221,11 @@ class ZIPPY_Pay_Settings extends WC_Settings_Page
     );
     return $settings_title;
   }
-}
 
-$wc_gateways      = new WC_Payment_Gateways();
-$payment_gateways = $wc_gateways->payment_gateways();
-
-if (!isset($payment_gateways[PAYMENT_ADYEN_ID]) || $payment_gateways[PAYMENT_ADYEN_ID]->enabled == 'no') {
-  return '';
-} else {
-  return new ZIPPY_Pay_Settings();
+  protected function get_status_payment($id_payment)
+  {
+    $payment_settings = get_option($id_payment);
+    $payment_status = isset($payment_settings['enabled']) ? $payment_settings['enabled'] : $payment_settings;
+    return $payment_status;
+  }
 }

@@ -26,15 +26,12 @@ define('PGAWC_VERSION', '1.0.0');
 define('PAYMENT_ADYEN_NAME', 'Online Payment');
 define('PAYMENT_PAYNOW_NAME', 'Paynow');
 define('PREFIX', 'zippy_payment_getway');
-define('PAYMENT_ADYEN_ID', 'zippy_adyen_payment');
+define('PAYMENT_ADYEN_ID', 'zippy_adyen_payment');  
 define('PAYMENT_PAYNOW_ID', 'zippy_paynow_payment');
 
 require ZIPPY_PAY_DIR_PATH . '/vendor/autoload.php';
 require ZIPPY_PAY_DIR_PATH . '/includes/autoload.php';
 
-
 ZIPPY_Adyen_Pay_Integration::get_instance();
 
 ZIPPY_Paynow_Integration::get_instance();
-
-

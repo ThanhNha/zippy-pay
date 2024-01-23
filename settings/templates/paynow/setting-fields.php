@@ -3,16 +3,19 @@
 namespace ZIPPY_Pay\Settings;
 
 defined('ABSPATH') || exit;
+/** @var $params */
 
 ?>
 
-<table class="form-table">
+<?php if (isset($params) && !empty($params)) : ?>
+
+<table class="form-table" id="zippy_setting_wrapper" style="display: none;">
   <tr>
     <th scope="row" class="titledesc">
       <?php _e('Paynow Integration Type', PREFIX . 'zippy-settings-field'); ?>
     </th>
     <td class="forminp forminp-text">
-      <span class="epos-paynow-details">OUB Integrated</span>
+      <span class="epos-paynow-details"><?php echo($params->paynowPaymentType) ;?> Integrated</span>
     </td>
   </tr>
   <tr>
@@ -20,7 +23,7 @@ defined('ABSPATH') || exit;
       <?php _e('Merchant UEN', PREFIX . 'zippy-settings-field'); ?>
     </th>
     <td class="forminp forminp-text">
-      <span class="epos-paynow-details">Merchant UEN</span>
+      <span class="epos-paynow-details"><?php echo($params->paynowMerchantUEN) ;?></span>
     </td>
   </tr>
   <tr>
@@ -28,7 +31,7 @@ defined('ABSPATH') || exit;
       <?php _e('MCC', PREFIX . 'zippy-settings-field'); ?>
     </th>
     <td class="forminp forminp-text">
-      <span class="epos-paynow-details">MCC</span>
+      <span class="epos-paynow-details"><?php echo($params->paynowMCC) ;?></span>
     </td>
   </tr>
   <tr>
@@ -36,7 +39,7 @@ defined('ABSPATH') || exit;
       <?php _e('Merchant Name', PREFIX . 'zippy-settings-field'); ?>
     </th>
     <td class="forminp forminp-text">
-      <span class="epos-paynow-details">Merchant Name</span>
+      <span class="epos-paynow-details"><?php echo($params->paynowMerchantName) ;?></span>
     </td>
   </tr>
   <tr>
@@ -44,10 +47,10 @@ defined('ABSPATH') || exit;
       <?php _e('Merchant Contact', PREFIX . 'zippy-settings-field'); ?>
     </th>
     <td class="forminp forminp-text">
-      <span class="epos-paynow-details"><strong>Merchant Contact</strong></span>
+      <span class="epos-paynow-details"><?php echo($params->paynowMerchantContact) ;?></span>
     </td>
   </tr>
 </table>
-<!-- <div class="pt-15">
-  <button id="zippy_setting_button" type="submit" class="button button-primary">Save changes</button>
-</div> -->
+
+<?php endif;?>
+

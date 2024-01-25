@@ -1,6 +1,6 @@
 {
     "require": {
         "adyen/php-api-library": "^6.3",
-        "viison/address-splitter": "^0.3.4"
+        "guzzlehttp/guzzle": "^7.0"
     }
 }

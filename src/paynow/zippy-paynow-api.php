@@ -1,6 +1,6 @@
 <?php
 
-namespace ZIPPY_Pay\Core\Paynow;
+namespace ZIPPY_Pay\Src\Paynow;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;

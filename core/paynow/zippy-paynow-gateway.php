@@ -3,7 +3,7 @@
 namespace ZIPPY_Pay\Core\Paynow;
 
 use WC_Payment_Gateway;
-use ZIPPY_Pay\Core\Paynow\ZIPPY_Paynow_Api;
+use ZIPPY_Pay\Src\Paynow\ZIPPY_Paynow_Api;
 
 
 defined('ABSPATH') || exit;

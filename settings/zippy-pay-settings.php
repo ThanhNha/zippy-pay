@@ -5,7 +5,6 @@ namespace ZIPPY_Pay\Settings;
 use WC_Settings_Page;
 use WC_Admin_Settings;
 use ZIPPY_Pay\Core\ZIPPY_Pay_Core;
-use WC_Payment_Gateways;
 use ZIPPY_Pay\Settings\ZIPPY_Fields_Setting;
 
 
@@ -22,6 +21,8 @@ class ZIPPY_Pay_Settings extends WC_Settings_Page
 
     $this->id    = 'zippy_payment_getway';
     $this->label = __('Zippy Payment',  PREFIX . 'zippy-settings-tab');
+    $this->id_paynow_tab = 'woocommerce_' . PAYMENT_PAYNOW_ID . '_settings';
+    $this->id_adyen_tab  = 'woocommerce_' .  PAYMENT_ADYEN_ID . '_settings';
     add_filter('woocommerce_settings_tabs_array', array($this, 'add_settings_tab'), 50);
     add_action('admin_enqueue_scripts', array($this, 'admin_scripts_and_styles'));
     add_action('woocommerce_sections_' . $this->id, array($this, 'output_sections'));
@@ -49,12 +50,22 @@ class ZIPPY_Pay_Settings extends WC_Settings_Page
    */
   public function get_sections()
   {
-
+    //Init Tab 
     $sections = array(
       ''                      => __('General', PREFIX . 'zippy-settings-tab'),
-      'zippy_credit_card'   => __('EPOSPay Credit Card', PREFIX . 'zippy-settings-tab'),
-      'zippy_paynow'   => __('EPOSPay Paynow', PREFIX . 'zippy-settings-tab'),
     );
+
+    $has_paynow_tab =  $this->get_payment_status($this->id_paynow_tab, true);
+
+    $has_adyen_tab =  $this->get_payment_status($this->id_adyen_tab, true);
+
+    if (isset($has_adyen_tab) && $has_adyen_tab == 'yes') {
+      $sections['zippy_credit_card'] = __('EPOSPay Credit Card', PREFIX . 'zippy-settings-tab');
+    }
+
+    if (isset($has_paynow_tab) && $has_paynow_tab == "yes") {
+      $sections['zippy_paynow'] = __('EPOSPay Paynow', PREFIX . 'zippy-settings-tab');
+    }
 
     return apply_filters('woocommerce_get_sections_' . $this->id, $sections);
   }
@@ -66,10 +77,6 @@ class ZIPPY_Pay_Settings extends WC_Settings_Page
    */
   public function get_settings($section = null)
   {
-
-    $id_paynow_field = 'woocommerce_' . PAYMENT_PAYNOW_ID . '_settings';
-
-    $id_adyen_field = 'woocommerce_' .  PAYMENT_ADYEN_ID . '_settings';
 
     switch ($section) {
 
@@ -83,8 +90,8 @@ class ZIPPY_Pay_Settings extends WC_Settings_Page
             'type'    => 'checkbox',
             'label'   => __('Enable EPOSPay Credit Card', PREFIX . 'zippy-settings-tab'),
             'default' => 'no',
-            'id'      =>  $id_adyen_field,
-            'value'   => $this->get_status_payment($id_adyen_field)
+            'id'      =>   $this->id_adyen_tab,
+            'value'   => $this->get_payment_status($this->id_adyen_tab)
           ),
           'zippy_credit_card_field'         => array(
             'id'       => 'zippy_credit_card_field',
@@ -110,8 +117,8 @@ class ZIPPY_Pay_Settings extends WC_Settings_Page
             'type'    => 'checkbox',
             'label'   => __('Enable EPOSPay Paynow', PREFIX . 'zippy-settings-tab'),
             'default' => 'no',
-            'id'      => $id_paynow_field,
-            'value'   => $this->get_status_payment($id_paynow_field)
+            'id'      =>  $this->id_paynow_tab,
+            'value'   => $this->get_payment_status($this->id_paynow_tab)
           ),
           'zippy_paynow_field' => array(
             'id'        => 'zippy_paynow_field',
@@ -222,10 +229,16 @@ class ZIPPY_Pay_Settings extends WC_Settings_Page
     return $settings_title;
   }
 
-  protected function get_status_payment($id_payment)
+  protected function get_payment_status($id_payment, $is_active_tab = false)
   {
     $payment_settings = get_option($id_payment);
-    $payment_status = isset($payment_settings['enabled']) ? $payment_settings['enabled'] : $payment_settings;
+
+    if ($is_active_tab) {
+      $payment_status = is_array($payment_settings) ? $payment_settings['enabled'] : 'yes';
+    } else {
+      $payment_status = isset($payment_settings['enabled']) ? $payment_settings['enabled'] : $payment_settings;
+    }
+
     return $payment_status;
   }
 }

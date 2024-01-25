@@ -47,18 +47,18 @@ class ZIPPY_Adyen_Pay_Integration
 
     public function setting_page($settings)
     {
-        $wc_gateways      = new WC_Payment_Gateways();
+        //     $wc_gateways      = new WC_Payment_Gateways();
 
-        $payment_gateways = $wc_gateways->payment_gateways();
+        //     $payment_gateways = $wc_gateways->payment_gateways();
 
-        $enabled_gateways = array(PAYMENT_ADYEN_ID, PAYMENT_PAYNOW_ID);
+        //     $enabled_gateways = array(PAYMENT_ADYEN_ID, PAYMENT_PAYNOW_ID);
 
-        foreach ($enabled_gateways as $gateway_id) {
-            if (isset($payment_gateways[$gateway_id]) && $payment_gateways[$gateway_id]->enabled == 'yes') {
-                $settings[] = new ZIPPY_Pay_Settings();
-                break;
-            }
-        }
+        //     foreach ($enabled_gateways as $gateway_id) {
+        //         if (isset($payment_gateways[$gateway_id]) && $payment_gateways[$gateway_id]->enabled == 'yes') {
+        $settings[] = new ZIPPY_Pay_Settings();
+        //         break;
+        //     }
+        // }
 
         return $settings;
     }

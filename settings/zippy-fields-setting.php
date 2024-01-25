@@ -39,6 +39,27 @@ class ZIPPY_Fields_Setting
     add_action('woocommerce_admin_field_zippy_credit_card_field', array($this, 'zippy_credit_card_settings'));
     add_action('woocommerce_admin_field_zippy_paynow_field', array($this, 'zippy_paynow_settings'));
     add_action('woocommerce_admin_field_zippy_general_field', array($this, 'zippy_general_settings'));
+    // add_action("wp_ajax_sync_config_payment_callback", array($this, "sync_config_payment_callback"));
+    // add_action("wp_ajax_nopriv_sync_config_payment_callback", array($this, "sync_config_payment_callback"));
+  }
+
+
+  /**
+   * Sync config from zippy
+   *
+   * @return array
+   */
+
+  public function sync_config_payment_callback()
+  {
+    // Example response
+    $response = array(
+      'status' => 'success',
+      'message' => 'AJAX request processed successfully',
+    );
+
+    // Send the JSON response
+    wp_send_json($response);
   }
 
   /**
@@ -48,6 +69,12 @@ class ZIPPY_Fields_Setting
    */
   function zippy_general_settings($current_section = '')
   {
+    $merchant_id =   WC_Admin_Settings::get_option(PREFIX . '_merchant_id');
+
+    echo ZIPPY_Pay_Core::get_template('general/setting-fields.php', [
+      'params' => $merchant_id,
+
+    ], dirname(__FILE__), '/templates');
   }
 
   /**
@@ -75,12 +102,10 @@ class ZIPPY_Fields_Setting
   function zippy_paynow_settings($current_section = '')
   {
 
-    $config_infor = ZIPPY_Paynow_Api::GetConfig();
-
-    $paynow_infor = $config_infor->result->paynowConfig;
+    $config_infor = get_option('zippy_configs_paynow');
 
     echo ZIPPY_Pay_Core::get_template('paynow/setting-fields.php', [
-      'params' => $paynow_infor,
+      'params' => $config_infor,
     ], dirname(__FILE__), '/templates');
   }
 }

@@ -33,15 +33,6 @@ defined('ABSPATH') || exit;
       </span>
     </td>
   </tr>
-  <tr>
-    <th>
-      <button id="zippy-sync-config" type="button" class="button button-secondary">
-        <div class="update" aria-hidden="true">
-          <p class="sync-btn dashicons-before dashicons-update"> Sync Configs</p>
-        </div>
-      </button>
-    </th>
-  </tr>
 </table>
 <div class="pt-15">
 

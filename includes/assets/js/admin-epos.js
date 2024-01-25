@@ -22,23 +22,43 @@ $(document).ready(function () {
     toggleCreditCardSection();
   });
 
-  // const btn_authorization = $("#zippy_authorization_button");
-  // if (btn_authorization.length) {
-  // }
+  const btnSync = $("#zippy_sync_config");
 
-  // function zippy_authorization() {
-  //   $.ajax({
-  //     url: ajax_object.ajaxurl, // this is the object instantiated in wp_localize_script function
-  //     type: "POST",
-  //     data: {
-  //       action: "zippy_authorization", // this is the function in your functions.php that will be triggered
-  //       name: "John",
-  //       age: "38",
-  //     },
-  //     success: function (data) {
-  //       //Do something with the result from server
-  //       console.log(data);
-  //     },
-  //   });
-  // }
+  btnSync.click(function (e) {
+    syncConfigPayment();
+  });
+
+  //Ajax Handle
+  function syncConfigPayment() {
+    $.ajax({
+      type: "GET",
+      url: "/wp-admin/admin-ajax.php",
+      data: {
+        action: "sync_config_payment",
+      },
+      dataType: "json",
+      beforeSend: function () {
+        btnSync.addClass("updating");
+      },
+      success: function (data) {
+        btnSync.removeClass("updating");
+        if (data.status) {
+          const is_success = `<p style="color: #2271b1">${data.message}</p>`;
+          $(is_success).insertAfter(btnSync);
+        } else {
+          const is_failed = `<p style="color: #cc0000">${data.message}</p>`;
+          $(is_failed).insertAfter(btnSync);
+        }
+      },
+      error: function (error) {
+        const is_failed = '<p style="color: #cc0000">Sync config is failed</p>';
+        $(is_failed).insertAfter(btnSync);
+      },
+      complete: function () {
+        setTimeout(function () {
+          location.reload(true);
+        }, 2000);
+      },
+    });
+  }
 });

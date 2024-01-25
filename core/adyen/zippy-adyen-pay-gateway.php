@@ -72,8 +72,6 @@ class ZIPPY_Adyen_Pay_Gateway extends WC_Payment_Gateway
 			'default' => 'no'
 			));
 
-			// 'sep'   => ZIPPY_Pay_Core::separator(),
-		
 	}
 
 	public function is_available()

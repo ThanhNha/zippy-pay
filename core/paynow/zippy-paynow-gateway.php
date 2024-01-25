@@ -45,7 +45,27 @@ class ZIPPY_Paynow_Gateway extends WC_Payment_Gateway
 				'label'   => __('Enable ' . PAYMENT_PAYNOW_NAME, PREFIX . '_zippy_payment'),
 				'default' => 'no'
 			],
-			'sep'   => ZIPPY_Pay_Core::separator(),
 		];
+	}
+
+	
+	/**
+	 * Woocomerce process payment
+	 *
+	 */
+	public function process_payment($order_id)
+	{
+
+		$order              = new WC_Order($order_id);
+		// $adyen_payment_data = $this->get_adyen_payment_data();
+		// $zippy              = new ZIPPY_Pay_Adyen($this->zippyConfigs);
+		// $result = $zippy->pay($order, $adyen_payment_data);
+
+		// Failed Payment
+		if (empty($result)) {
+			$this->handle_payment_failed();
+		}
+
+		return $this->handle_do_payment($order);
 	}
 }

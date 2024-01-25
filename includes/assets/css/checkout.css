@@ -77,7 +77,7 @@
 .woocommerce-checkout #payment #zippy-container img {
   margin: 0;
 }
-.woocommerce-checkout #payment #zippy-container .has-error {
+.woocommerce-checkout #payment .zippy-has-error {
   color: red;
   font-size: 14px;
 }

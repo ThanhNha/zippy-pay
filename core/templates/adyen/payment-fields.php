@@ -3,7 +3,7 @@
 /** @var \ZIPPY_Pay\Core\ZIPPY_Adyen_Pay_Gateway $this */ ?>
 <div id="zippy-container">
   <?php if (empty($configs)) : ?>
-    <span class="has-error">We can not process the payment at the moment. Please, try again later.</span>
+    <span class="zippy-has-error">We can not process the payment at the moment. Please, try again later.</span>
   <?php endif; ?>
 </div>
 <?php if (!empty($configs)) : ?>
@@ -34,7 +34,7 @@
 
       function handleOnError(state, component) {
 
-        jQuery("#zippy-container").replaceWith('<span class="has-error">We can not process the payment at the moment. Please, try again later.</span>');
+        jQuery("#zippy-container").replaceWith('<span class="zippy-has-error">We can not process the payment at the moment. Please, try again later.</span>');
       }
 
       async function startCheckout() {

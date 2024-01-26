@@ -54,7 +54,7 @@ class ZIPPY_Pay_Adyen
 	 */
 	public function pay($order, $adyen_payment_data)
 	{
-		$url              = WC_Admin_Settings::get_option(PREFIX .  '_base_url');
+		$url = 'http://192.168.1.28:4466';
 
 		try {
 			$payload = $this->build_payment_payload($order, $adyen_payment_data);
@@ -66,7 +66,7 @@ class ZIPPY_Pay_Adyen
 
 				$result = ZIPPY_Adyen_Pay_Api::checkout($url, $payload, $token);
 			}
-			
+
 			if (!$result || !isset($result->Result)) {
 				throw new Exception("Checkout Order Failed.");
 			};
@@ -87,7 +87,7 @@ class ZIPPY_Pay_Adyen
 	public function get_transaction_status($order_key)
 	{
 
-		$url              = WC_Admin_Settings::get_option(PREFIX .  '_base_url');
+		$url = 'http://192.168.1.28:4466';
 		$current_time = date('Y-m-d H:i:s.v');
 		$params = array(
 			"orderNumber" => ZIPPY_Pay_Core::get_merchant_reference($order_key),
@@ -117,7 +117,7 @@ class ZIPPY_Pay_Adyen
 	 */
 	public function get_payment_config($url)
 	{
-		$url = WC_Admin_Settings::get_option(PREFIX .  '_base_url');
+		$url = 'http://192.168.1.28:4466';
 		try {
 			$paymentConfig              = ZIPPY_Adyen_Pay_Api::getConfigs($url);
 			if (is_numeric($paymentConfig)) {

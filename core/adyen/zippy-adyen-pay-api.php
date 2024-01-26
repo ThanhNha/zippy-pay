@@ -45,6 +45,8 @@ class ZIPPY_Adyen_Pay_Api
 
     $response = curl_exec($curl);
 
+    var_dump($response);
+
     $httpcode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
 
     // Close the cURL session

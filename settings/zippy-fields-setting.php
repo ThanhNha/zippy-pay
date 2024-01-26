@@ -4,8 +4,6 @@ namespace ZIPPY_Pay\Settings;
 
 use WC_Admin_Settings;
 use ZIPPY_Pay\Core\ZIPPY_Pay_Core;
-use ZIPPY_Pay\Core\Paynow\ZIPPY_Paynow_Api;
-
 
 defined('ABSPATH') || exit;
 

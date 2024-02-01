@@ -33,20 +33,35 @@ class ZIPPY_Paynow_Payment
     $merchant_id = get_option(PREFIX . '_merchant_id');
 
     $callback_url = str_replace('https:', 'http:', add_query_arg(array(
-      'wc-api'      => 'zippy_paynow_callback',
+      'wc-api'      => 'zippy_paynow_transaction',
       'order_id'     => $order_id
     ), home_url('/')));
 
     $payload = array(
-
-      "StoreId" => $merchant_id,
       "OrderId" => $order_id,
       "Amount" => $total,
       "CallbackUrl" => $callback_url,
-      "ReturnUrl" => wc_get_checkout_url()
-
     );
 
-    return $payload;
+    $key = get_option(PREFIX . '_secret_key');
+
+    $payload_2 = array(
+      "data" => $this->encryptString($payload, $key)
+    );
+
+    return $payload_2;
+  }
+
+  public function encryptString($string, $secretKey)
+  {
+    $jsonString = json_encode($string);
+    $method = 'aes-256-cbc';
+    $key = substr(hash('sha256', $secretKey), 0, 32);
+    $iv = random_bytes(16);
+
+    $encrypted = openssl_encrypt($jsonString, $method, $key, 0, $iv);
+    $encoded = base64_encode($jsonString);
+
+    return $encoded;
   }
 }

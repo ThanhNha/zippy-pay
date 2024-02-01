@@ -4,7 +4,6 @@ namespace ZIPPY_Pay\Core\Adyen;
 
 use ZIPPY_Pay\Core\Adyen\ZIPPY_Adyen_Pay_Gateway;
 use ZIPPY_Pay\Settings\ZIPPY_Pay_Settings;
-use WC_Payment_Gateways;
 
 class ZIPPY_Adyen_Pay_Integration
 {
@@ -43,23 +42,18 @@ class ZIPPY_Adyen_Pay_Integration
         add_action('plugins_loaded', [$this, 'zippy_payment_load_plugin_textdomain']);
 
         add_action('wp_enqueue_scripts', [$this, 'scripts_and_styles']);
+
+        add_action('before_woocommerce_init', function () {
+            if (class_exists(\Automattic\WooCommerce\Utilities\FeaturesUtil::class)) {
+                \Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility('custom_order_tables', __FILE__, true);
+            }
+        });
     }
 
     public function setting_page($settings)
     {
-        //     $wc_gateways      = new WC_Payment_Gateways();
 
-        //     $payment_gateways = $wc_gateways->payment_gateways();
-
-        //     $enabled_gateways = array(PAYMENT_ADYEN_ID, PAYMENT_PAYNOW_ID);
-
-        //     foreach ($enabled_gateways as $gateway_id) {
-        //         if (isset($payment_gateways[$gateway_id]) && $payment_gateways[$gateway_id]->enabled == 'yes') {
         $settings[] = new ZIPPY_Pay_Settings();
-        //         break;
-        //     }
-        // }
-
         return $settings;
     }
 

@@ -3,9 +3,6 @@
 namespace ZIPPY_Pay\Core\Paynow;
 
 use ZIPPY_Pay\Core\Paynow\ZIPPY_Paynow_Gateway;
-use WC_Payment_Gateways;
-use ZIPPY_Pay\Settings\ZIPPY_Pay_Settings;
-use WC_Settings_Page;
 
 class ZIPPY_Paynow_Integration
 {
@@ -40,7 +37,6 @@ class ZIPPY_Paynow_Integration
 
         add_filter('woocommerce_payment_gateways',  array($this, 'add_zippy_paynow_to_woocommerce'));
         add_action('plugins_loaded',  array($this, 'zippy_paynow_load_plugin_textdomain'));
-
     }
 
     public function add_zippy_paynow_to_woocommerce($gateways)

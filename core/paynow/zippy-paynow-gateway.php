@@ -30,8 +30,9 @@ class ZIPPY_Paynow_Gateway extends WC_Payment_Gateway
 		$this->method_description = __('', PREFIX . '_zippy_payment');
 		$this->enabled         = $this->get_option('enabled');
 		add_action('woocommerce_receipt_' . $this->id, [$this, 'receipt_page']);
+		add_action('woocommerce_thankyou_' . $this->id, [$this, 'handle_send_message_whatsapp']);
 		add_action('woocommerce_update_options_payment_gateways_' . $this->id, [$this, 'process_admin_options']);
-		add_action('woocommerce_api_zippy_paynow_callback', [$this, 'handle_redirect']);
+		add_action('woocommerce_api_zippy_paynow_transaction', [$this, 'handle_redirect']);
 	}
 
 	/**
@@ -58,7 +59,14 @@ class ZIPPY_Paynow_Gateway extends WC_Payment_Gateway
 	public function payment_fields()
 	{
 		$is_active = $this->is_gateway_configured();
-		include_once ZIPPY_PAY_DIR_PATH . 'core/templates/paynow/message-fields.php';
+
+		echo ZIPPY_Pay_Core::get_template('message-fields.php', [
+			'is_active' => 	$is_active,
+		], dirname(__FILE__), '/templates');
+		//Popup 
+		echo ZIPPY_Pay_Core::get_template('pop-up-noti.php', [
+			'is_active' => 	$is_active,
+		], dirname(__FILE__), '/templates');
 	}
 
 	/**
@@ -70,7 +78,7 @@ class ZIPPY_Paynow_Gateway extends WC_Payment_Gateway
 
 		$order              = new WC_Order($order_id);
 
-		// Failed Payment
+		// // Failed Payment
 		if (empty($order)) {
 			$this->handle_payment_failed();
 		}
@@ -90,7 +98,12 @@ class ZIPPY_Paynow_Gateway extends WC_Payment_Gateway
 
 	private function handle_do_payment($order)
 	{
-		// always redirect to Zippy 
+
+		// if ($is_active = $this->is_gateway_configured()) {
+		// 	return $this->handle_payment_failed();
+		// }
+
+		// always redirect to Zippy
 		return $this->handle_payment_redirect($order);
 	}
 
@@ -111,6 +124,10 @@ class ZIPPY_Paynow_Gateway extends WC_Payment_Gateway
 
 		$paynow_response = $api->paynowPayment($paynow_payload);
 
+		if (!isset($paynow_response->Result->redirectUrl)) {
+			return $this->handle_payment_failed();
+		}
+
 		update_option('zippy_paynow_redirect_object_' . $order_id, $paynow_response);
 
 		return  [
@@ -125,14 +142,36 @@ class ZIPPY_Paynow_Gateway extends WC_Payment_Gateway
 	 */
 	public function receipt_page($order_id)
 	{
+
 		$redirectData = get_option('zippy_paynow_redirect_object_' . $order_id);
 
 		if (!isset($redirectData) || empty($redirectData)) {
-			wp_safe_redirect(wc_get_checkout_url(), '301');
+			wp_safe_redirect(get_checkout_payment_url(), '301');
 			$this->add_notice();
 		}
 
 		wp_redirect($redirectData->Result->redirectUrl);
+	}
+
+
+	/**
+	 * Woocomerce Custom thankyou page support send message by Whatsapp.
+	 *
+	 */
+	public function handle_send_message_whatsapp($order_id)
+	{
+		//Send massage by Whatsapp
+		$domain = ZIPPY_Pay_Core::get_domain_name();
+
+		$config_infor = get_option('zippy_configs_paynow');
+
+		$user_contact = isset($config_infor->merchantContact) ? $config_infor->merchantContact : '';
+
+		echo ZIPPY_Pay_Core::get_template('whatsapp-handle.php', [
+			'user_contact' => $user_contact,
+			'domain' => $domain,
+
+		], dirname(__FILE__), '/templates');
 	}
 
 	/**
@@ -141,9 +180,42 @@ class ZIPPY_Paynow_Gateway extends WC_Payment_Gateway
 	 */
 	public function handle_redirect()
 	{
-		echo 'shin';
-		die();
-		
+		// Check status order 
+		$order_id = intval($_REQUEST['order_id']);
+
+		$order = new WC_Order($order_id);
+
+		if (!isset($_REQUEST['order_id']) || empty($_REQUEST['order_id'])) {
+			wp_redirect($order->get_checkout_payment_url());
+			exit;
+		}
+
+		$api = new ZIPPY_Paynow_Api();
+
+		$status = $api->checkStatusOrder($order_id);
+
+		return $this->check_order_status($status, $order);
+	}
+
+	private function check_order_status($status, $order)
+	{
+
+		$order_id = $order->get_id();
+
+		if (isset($status) && $status->result->status === "completed") {
+
+			delete_option('zippy_paynow_redirect_object_' .	$order_id);
+
+			$order->add_order_note(sprintf(__('Payment was complete via ' . PAYMENT_PAYNOW_NAME, PREFIX . '_zippy_payment')));
+
+			$order->payment_complete();
+
+			// should get payment details to log in the order.
+
+			wp_redirect($this->get_return_url($order));
+		} else {
+			wp_redirect($order->get_checkout_payment_url()); // Redirect to page pay-order to payment again.
+		}
 	}
 
 	/**

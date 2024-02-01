@@ -14,8 +14,8 @@
       handleChooseMethodPayment();
 
       function handleChooseMethodPayment() {
-        jQuery("#payment_method_zippy_pay").prop('checked', false);
-        jQuery("#payment_method_zippy_pay").change(function() {
+        jQuery("#payment_method_zippy_adyen_payment").prop('checked', false);
+        jQuery("#payment_method_zippy_adyen_payment").change(function() {
 
           if (jQuery(this).is(':checked')) {
             startCheckout();

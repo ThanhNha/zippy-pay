@@ -20,7 +20,9 @@ class ZIPPY_Adyen_Pay_Api
   {
     $path = '/v1/User/eCommerce/GetToken';
 
-    $domain = ZIPPY_Pay_Core::get_domain_name();
+    // $domain = ZIPPY_Pay_Core::get_domain_name();
+
+    $domain = 'localhost';
 
     $url_token = $url . $path;
 
@@ -88,7 +90,9 @@ class ZIPPY_Adyen_Pay_Api
 
     $hash_hmac_data = self::build_hash_hmac($path, $merchant_id, $timestamp, '', 'GET');
 
-    $domain = ZIPPY_Pay_Core::get_domain_name();
+    // $domain = ZIPPY_Pay_Core::get_domain_name();
+
+    $domain = 'localhost';
 
     $headers = array(
       'Content-Type: application/json',
@@ -235,7 +239,9 @@ class ZIPPY_Adyen_Pay_Api
   {
     $secret_key = WC_Admin_Settings::get_option(PREFIX . '_secret_key');
 
-    $domain = ZIPPY_Pay_Core::get_domain_name();
+    // $domain = ZIPPY_Pay_Core::get_domain_name();
+
+    $domain = 'localhost';
 
     $raw_signature =  $secret_key . ":" . $merchant_id   . ":" . $domain  . ":" . $timestamp  . ":" . $method  . ":" . $path_query . ":" . $payload;
 

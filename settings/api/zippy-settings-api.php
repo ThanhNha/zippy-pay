@@ -22,12 +22,14 @@ class ZIPPY_Settings_Api
   public function __construct()
   {
     self::$client = new Client([
-      'base_uri' => 'http://192.168.1.28:4466/',
-      'timeout'  => 5.0,
+      'base_uri' => 'http://192.168.1.24:4466/',
+      'timeout'  => 6,
     ]);
   }
   public static function GetConfigs()
   {
+    $merchant_id = get_option(PREFIX . '_merchant_id');
+
 
     if (self::$client === null) {
       new self();
@@ -35,7 +37,7 @@ class ZIPPY_Settings_Api
     try {
 
 
-      $configs = self::$client->request("GET", "v1/payment/ecommerce/paymentoptions", ['query' => ['merchantId' => '445adf53-3a26-4296-8723-b6a28299f712']]);
+      $configs = self::$client->request("GET", "v1/payment/ecommerce/paymentoptions", ['query' => ['merchantId' => $merchant_id]]);
 
       if ($configs->getStatusCode() == 200) {
         $response = array(

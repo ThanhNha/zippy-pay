@@ -14,8 +14,8 @@
       handleChooseMethodPayment();
 
       function handleChooseMethodPayment() {
-        jQuery("#payment_method_zippy_pay").prop('checked', false);
-        jQuery("#payment_method_zippy_pay").change(function() {
+        jQuery("#payment_method_zippy_adyen_payment").prop('checked', false);
+        jQuery("#payment_method_zippy_adyen_payment").change(function() {
 
           if (jQuery(this).is(':checked')) {
             startCheckout();
@@ -50,7 +50,7 @@
       async function createAdyenCheckout() {
         return await AdyenCheckout({
           locale: "<?php echo esc_js(get_locale()); ?>",
-          environment: "<?php echo esc_js($this->test_mode === 'yes' ? 'test' : 'live'); ?>",
+          environment: "test",
           clientKey: <?php echo json_encode($configs->clientKey); ?>,
           paymentMethodsResponse: <?php echo json_encode($configs->paymentMethods); ?>,
           openFirstStoredPaymentMethod: false,

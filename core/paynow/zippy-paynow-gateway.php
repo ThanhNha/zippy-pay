@@ -63,7 +63,8 @@ class ZIPPY_Paynow_Gateway extends WC_Payment_Gateway
 		echo ZIPPY_Pay_Core::get_template('message-fields.php', [
 			'is_active' => 	$is_active,
 		], dirname(__FILE__), '/templates');
-		//Popup 
+
+		//Popup
 		echo ZIPPY_Pay_Core::get_template('pop-up-noti.php', [
 			'is_active' => 	$is_active,
 		], dirname(__FILE__), '/templates');

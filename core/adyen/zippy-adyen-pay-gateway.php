@@ -4,7 +4,7 @@ namespace ZIPPY_Pay\Core\Adyen;
 
 use WC_Order;
 use WC_Payment_Gateway;
-use ZIPPY_Pay\Adyen\ZIPPY_Pay_Adyen;
+use ZIPPY_Pay\Core\Adyen\ZIPPY_Pay_Adyen;
 use ZIPPY_Pay\Adyen\ZIPPY_Pay_Adyen_Config;
 use ZIPPY_Pay\Core\ZIPPY_Pay_Core;
 use WC_Admin_Settings;
@@ -51,7 +51,7 @@ class ZIPPY_Adyen_Pay_Gateway extends WC_Payment_Gateway
 		$this->secret_key      = trim(WC_Admin_Settings::get_option(PREFIX . '_secret_key'));
 		$this->base_url        = trim(WC_Admin_Settings::get_option(PREFIX .  '_base_url'));
 		// $this->test_mode       = WC_Admin_Settings::get_option(PREFIX .  '_test_mode');
-		$this->zippyConfigs = new ZIPPY_Pay_Adyen_Config($this->settings);
+		// $this->zippyConfigs = new ZIPPY_Pay_Adyen_Config($this->settings);
 		add_action('woocommerce_update_options_payment_gateways_' . $this->id, [$this, 'process_admin_options']);
 		add_action('woocommerce_receipt_' . $this->id, [$this, 'receipt_page']);
 		add_action('woocommerce_api_wc_zippy_redirect', [$this, 'handle_payment_redirect']);
@@ -66,12 +66,12 @@ class ZIPPY_Adyen_Pay_Gateway extends WC_Payment_Gateway
 
 		$this->form_fields = array(
 			'enabled'         => array(
-			'title'   => __('Enable ' . PAYMENT_ADYEN_NAME, PREFIX . '_zippy_payment'),
-			'type'    => 'checkbox',
-			'label'   => __('Enable ' . PAYMENT_ADYEN_NAME, PREFIX . '_zippy_payment'),
-			'default' => 'no'
-			));
-
+				'title'   => __('Enable ' . PAYMENT_ADYEN_NAME, PREFIX . '_zippy_payment'),
+				'type'    => 'checkbox',
+				'label'   => __('Enable ' . PAYMENT_ADYEN_NAME, PREFIX . '_zippy_payment'),
+				'default' => 'no'
+			)
+		);
 	}
 
 	public function is_available()
@@ -87,9 +87,16 @@ class ZIPPY_Adyen_Pay_Gateway extends WC_Payment_Gateway
 	{
 		if ($this->is_available()) {
 
-			$configs = (new ZIPPY_Pay_Adyen($this->zippyConfigs))->get_payment_config($this->base_url);
+			$adyen = new ZIPPY_Pay_Adyen();
 
-			include_once ZIPPY_PAY_DIR_PATH . 'core/templates/adyen/payment-fields.php';
+			$configs = $adyen->get_payment_config();
+
+			echo ZIPPY_Pay_Core::get_template('payment-fields.php', [
+				'configs' => 	$configs,
+				'test' => 	'shin',
+			], dirname(__FILE__), '/templates');
+
+			// include_once ZIPPY_PAY_DIR_PATH . 'core/templates/adyen/payment-fields.php';
 		}
 	}
 
@@ -239,9 +246,15 @@ class ZIPPY_Adyen_Pay_Gateway extends WC_Payment_Gateway
 			return;
 		}
 		$endpoint = add_query_arg('wc-api', 'wc_adyen_redirect', trailingslashit(get_home_url()));
+
 		$return_url = add_query_arg('order_id', $order_id, $endpoint);
 
-		include_once ZIPPY_PAY_DIR_PATH . 'core/templates/adyen/form-redirect.php';
+		// include_once ZIPPY_PAY_DIR_PATH . 'core/templates/adyen/form-redirect.php';
+
+		echo ZIPPY_Pay_Core::get_template('form-redirect.php', [
+			'return_url' => 	$return_url,
+			'action' => 	$action,
+		], dirname(__FILE__), '/templates');
 	}
 
 	private function handle_redirect($result, $order)

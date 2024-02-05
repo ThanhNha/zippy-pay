@@ -20,11 +20,11 @@ class ZIPPY_Adyen_Api
   public function __construct()
   {
     $this->client = new Client([
-      'base_uri' => 'http://192.168.1.24:4466',
+      'base_uri' => 'https://zippyapi-local.toannm.click',
       'headers' => [
         'Content-Type' => 'application/json',
       ],
-      'timeout'  => 5,
+      'timeout'  => 10,
     ]);
   }
 
@@ -150,11 +150,13 @@ class ZIPPY_Adyen_Api
    */
   public function adyenCheckout($params = array(), $token = '')
   {
+
     $token = empty($token) ? $_COOKIE['access_token'] : $token;
 
     $data = json_encode($params);
 
     unset($params['paymentMethod'], $params['browserInfo'], $params['returnUrl']);
+
 
     $path = '/v1/payment/adyen/ecommerce/payment';
 
@@ -179,7 +181,7 @@ class ZIPPY_Adyen_Api
         $path,
         [
           'headers' => $headers,
-          'form_params' => $data
+          'body' => $data
         ]
       );
 
@@ -209,9 +211,7 @@ class ZIPPY_Adyen_Api
   {
     $token = empty($token) ? $_COOKIE['access_token'] : $token;
 
-    $path_url = '/v1/payment/adyen/ecommerce/transactionStatus';
-
-    $path = sprintf("%s?%s", $path_url, http_build_query($params));
+    $path = '/v1/payment/adyen/ecommerce/transactionStatus';
 
     $timestamp = time();
 

@@ -5,7 +5,6 @@ namespace ZIPPY_Pay\Core\Adyen;
 use WC_Order;
 use WC_Payment_Gateway;
 use ZIPPY_Pay\Core\Adyen\ZIPPY_Pay_Adyen;
-use ZIPPY_Pay\Adyen\ZIPPY_Pay_Adyen_Config;
 use ZIPPY_Pay\Core\ZIPPY_Pay_Core;
 use WC_Admin_Settings;
 
@@ -96,7 +95,6 @@ class ZIPPY_Adyen_Pay_Gateway extends WC_Payment_Gateway
 				'test' => 	'shin',
 			], dirname(__FILE__), '/templates');
 
-			// include_once ZIPPY_PAY_DIR_PATH . 'core/templates/adyen/payment-fields.php';
 		}
 	}
 
@@ -109,7 +107,7 @@ class ZIPPY_Adyen_Pay_Gateway extends WC_Payment_Gateway
 
 		$order              = new WC_Order($order_id);
 		$adyen_payment_data = $this->get_adyen_payment_data();
-		$zippy              = new ZIPPY_Pay_Adyen($this->zippyConfigs);
+		$zippy              = new ZIPPY_Pay_Adyen();
 		$result = $zippy->pay($order, $adyen_payment_data);
 
 		// Failed Payment
@@ -248,8 +246,6 @@ class ZIPPY_Adyen_Pay_Gateway extends WC_Payment_Gateway
 		$endpoint = add_query_arg('wc-api', 'wc_adyen_redirect', trailingslashit(get_home_url()));
 
 		$return_url = add_query_arg('order_id', $order_id, $endpoint);
-
-		// include_once ZIPPY_PAY_DIR_PATH . 'core/templates/adyen/form-redirect.php';
 
 		echo ZIPPY_Pay_Core::get_template('form-redirect.php', [
 			'return_url' => 	$return_url,

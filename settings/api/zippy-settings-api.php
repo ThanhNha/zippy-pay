@@ -22,7 +22,7 @@ class ZIPPY_Settings_Api
   public function __construct()
   {
     self::$client = new Client([
-      'base_uri' => 'http://192.168.1.24:4466/',
+      'base_uri' => 'https://zippyapi-local.toannm.click/',
       'timeout'  => 6,
     ]);
   }

@@ -184,6 +184,8 @@ class ZIPPY_Paynow_Gateway extends WC_Payment_Gateway
 		// Check status order 
 		$order_id = intval($_REQUEST['order_id']);
 
+		$merchant_id = get_option(PREFIX . '_merchant_id');
+
 		$order = new WC_Order($order_id);
 
 		if (!isset($_REQUEST['order_id']) || empty($_REQUEST['order_id'])) {
@@ -193,7 +195,7 @@ class ZIPPY_Paynow_Gateway extends WC_Payment_Gateway
 
 		$api = new ZIPPY_Paynow_Api();
 
-		$status = $api->checkStatusOrder($order_id);
+		$status = $api->checkStatusOrder($merchant_id, $order_id);
 
 		return $this->check_order_status($status, $order);
 	}
@@ -242,7 +244,9 @@ class ZIPPY_Paynow_Gateway extends WC_Payment_Gateway
 	{
 		$api = new ZIPPY_Paynow_Api();
 
-		$checkPaynowStatus = $api->checkPaynowIsActive();
+		$merchant_id = get_option(PREFIX . '_merchant_id');
+
+		$checkPaynowStatus = $api->checkPaynowIsActive($merchant_id);
 
 		if (empty($checkPaynowStatus['data']) || !$checkPaynowStatus['status']) return false;
 

@@ -126,7 +126,7 @@ class ZIPPY_Pay_Core
   {
 
     $incl_port = get_option('incl_server_port', 'yes');
-    $protocol  = $_SERVER['HTTPS'] === 'on' ? 'https://' : 'http://';
+    $protocol  = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https://' : 'http://';
     $port      = in_array($_SERVER['SERVER_PORT'], ['80', '443']) ? '' : ':' . $_SERVER['SERVER_PORT'];
     $domain    = 'yes' === $incl_port ? $protocol . $_SERVER['HTTP_HOST'] . $port : $protocol . $_SERVER['HTTP_HOST'];
 

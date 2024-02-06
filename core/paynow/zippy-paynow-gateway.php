@@ -162,6 +162,10 @@ class ZIPPY_Paynow_Gateway extends WC_Payment_Gateway
 	public function handle_send_message_whatsapp($order_id)
 	{
 		//Send massage by Whatsapp
+		$config_infor = get_option('zippy_configs_paynow');
+
+		$type = isset($config_infor) ? $config_infor->paymentType : '';
+
 		$domain = ZIPPY_Pay_Core::get_domain_name();
 
 		$config_infor = get_option('zippy_configs_paynow');
@@ -171,6 +175,7 @@ class ZIPPY_Paynow_Gateway extends WC_Payment_Gateway
 		echo ZIPPY_Pay_Core::get_template('whatsapp-handle.php', [
 			'user_contact' => $user_contact,
 			'domain' => $domain,
+			'type' => $type
 
 		], dirname(__FILE__), '/templates');
 	}

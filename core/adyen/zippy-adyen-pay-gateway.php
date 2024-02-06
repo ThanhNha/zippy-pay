@@ -49,8 +49,6 @@ class ZIPPY_Adyen_Pay_Gateway extends WC_Payment_Gateway
 		$this->merchant_id     = trim(WC_Admin_Settings::get_option(PREFIX . '_merchant_id'));
 		$this->secret_key      = trim(WC_Admin_Settings::get_option(PREFIX . '_secret_key'));
 		$this->base_url        = trim(WC_Admin_Settings::get_option(PREFIX .  '_base_url'));
-		// $this->test_mode       = WC_Admin_Settings::get_option(PREFIX .  '_test_mode');
-		// $this->zippyConfigs = new ZIPPY_Pay_Adyen_Config($this->settings);
 		add_action('woocommerce_update_options_payment_gateways_' . $this->id, [$this, 'process_admin_options']);
 		add_action('woocommerce_receipt_' . $this->id, [$this, 'receipt_page']);
 		add_action('woocommerce_api_wc_zippy_redirect', [$this, 'handle_payment_redirect']);
@@ -94,7 +92,6 @@ class ZIPPY_Adyen_Pay_Gateway extends WC_Payment_Gateway
 				'configs' => 	$configs,
 				'test' => 	'shin',
 			], dirname(__FILE__), '/templates');
-
 		}
 	}
 

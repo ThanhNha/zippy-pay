@@ -50,7 +50,7 @@
       async function createAdyenCheckout() {
         return await AdyenCheckout({
           locale: "<?php echo esc_js(get_locale()); ?>",
-          environment: "test",
+          environment: "live",
           clientKey: <?php echo json_encode($configs->clientKey); ?>,
           paymentMethodsResponse: <?php echo json_encode($configs->paymentMethods); ?>,
           openFirstStoredPaymentMethod: false,

@@ -39,7 +39,7 @@ class ZIPPY_Adyen_Api
 
     // $domain = ZIPPY_Pay_Core::get_domain_name();
 
-    $domain = 'localhost';
+    $domain = 'ahmachili';
 
     $timestamp = time();
 
@@ -94,7 +94,7 @@ class ZIPPY_Adyen_Api
 
     // $domain = ZIPPY_Pay_Core::get_domain_name();
 
-    $domain = 'localhost';
+    $domain = 'ahmachili';
 
     $headers = array(
       'AccessToken' => $token,
@@ -134,7 +134,7 @@ class ZIPPY_Adyen_Api
   {
     $token  = $this->getToken();
 
-    $access_token = $token->Result->Token;
+    $access_token = isset($token->Result->Token) && !empty($token) ? $token->Result->Token : '';
 
     setcookie("access_token", $access_token); // the first save token
 
@@ -164,7 +164,7 @@ class ZIPPY_Adyen_Api
 
     // $domain = ZIPPY_Pay_Core::get_domain_name();
 
-    $domain = 'localhost';
+    $domain = 'ahmachili';
 
     $merchant_id =  WC_Admin_Settings::get_option(PREFIX . '_merchant_id');
 
@@ -220,7 +220,7 @@ class ZIPPY_Adyen_Api
     $hash_hmac_data = $this->build_hash_hmac($path, $merchant_id, $timestamp, '', 'GET');
 
     // $domain = ZIPPY_Pay_Core::get_domain_name();
-    $domain = 'localhost';
+    $domain = 'ahmachili';
 
     $headers = array(
       'AccessToken' => $token,
@@ -263,7 +263,7 @@ class ZIPPY_Adyen_Api
 
     // $domain = ZIPPY_Pay_Core::get_domain_name();
 
-    $domain = 'localhost';
+    $domain = 'ahmachili';
 
     $raw_signature =  $secret_key . ":" . $merchant_id   . ":" . $domain  . ":" . $timestamp  . ":" . $method  . ":" . $path_query . ":" . $payload;
 

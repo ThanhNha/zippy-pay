@@ -20,7 +20,7 @@ class ZIPPY_Adyen_Api
   public function __construct()
   {
     $this->client = new Client([
-      'base_uri' => 'https://zippyapi-local.toannm.click',
+      'base_uri' => 'https://rest.zippy.sg',
       'headers' => [
         'Content-Type' => 'application/json',
       ],
@@ -37,9 +37,7 @@ class ZIPPY_Adyen_Api
 
     $path = '/v1/User/eCommerce/GetToken';
 
-    // $domain = ZIPPY_Pay_Core::get_domain_name();
-
-    $domain = 'ahmachili';
+    $domain = ZIPPY_Pay_Core::get_domain_name();
 
     $timestamp = time();
 
@@ -92,9 +90,7 @@ class ZIPPY_Adyen_Api
 
     $hash_hmac_data = $this->build_hash_hmac($path, $merchant_id, $timestamp, '', 'GET');
 
-    // $domain = ZIPPY_Pay_Core::get_domain_name();
-
-    $domain = 'ahmachili';
+    $domain = ZIPPY_Pay_Core::get_domain_name();
 
     $headers = array(
       'AccessToken' => $token,
@@ -157,14 +153,11 @@ class ZIPPY_Adyen_Api
 
     unset($params['paymentMethod'], $params['browserInfo'], $params['returnUrl']);
 
-
     $path = '/v1/payment/adyen/ecommerce/payment';
 
     $timestamp = time();
 
-    // $domain = ZIPPY_Pay_Core::get_domain_name();
-
-    $domain = 'ahmachili';
+    $domain = ZIPPY_Pay_Core::get_domain_name();
 
     $merchant_id =  WC_Admin_Settings::get_option(PREFIX . '_merchant_id');
 
@@ -219,8 +212,7 @@ class ZIPPY_Adyen_Api
 
     $hash_hmac_data = $this->build_hash_hmac($path, $merchant_id, $timestamp, '', 'GET');
 
-    // $domain = ZIPPY_Pay_Core::get_domain_name();
-    $domain = 'ahmachili';
+    $domain = ZIPPY_Pay_Core::get_domain_name();
 
     $headers = array(
       'AccessToken' => $token,
@@ -261,9 +253,7 @@ class ZIPPY_Adyen_Api
   {
     $secret_key = WC_Admin_Settings::get_option(PREFIX . '_secret_key');
 
-    // $domain = ZIPPY_Pay_Core::get_domain_name();
-
-    $domain = 'ahmachili';
+    $domain = ZIPPY_Pay_Core::get_domain_name();
 
     $raw_signature =  $secret_key . ":" . $merchant_id   . ":" . $domain  . ":" . $timestamp  . ":" . $method  . ":" . $path_query . ":" . $payload;
 

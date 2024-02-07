@@ -17,7 +17,7 @@ class ZIPPY_Paynow_Api
   public function __construct()
   {
     $this->client = new Client([
-      'base_uri' => 'https://zippyapi-local.toannm.click/',
+      'base_uri' => 'https://rest.zippy.sg/',
       'headers' => [
         'Content-Type' => 'application/json',
       ],

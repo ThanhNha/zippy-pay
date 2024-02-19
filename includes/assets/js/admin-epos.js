@@ -43,6 +43,7 @@ $(document).ready(function () {
       success: function (data) {
         btnSync.removeClass("updating");
         if (data.status) {
+          console.log(data);
           const is_success = `<p style="color: #2271b1">${data.message}</p>`;
           $(is_success).insertAfter(btnSync);
         } else {
@@ -55,9 +56,9 @@ $(document).ready(function () {
         $(is_failed).insertAfter(btnSync);
       },
       complete: function () {
-        setTimeout(function () {
-          location.reload(true);
-        }, 2000);
+        // setTimeout(function () {
+        //   location.reload(true);
+        // }, 2000);
       },
     });
   }

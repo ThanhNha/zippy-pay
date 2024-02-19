@@ -9,40 +9,40 @@ class ZIPPY_Pay_Core
 {
 
 
-	/**
-	 * Recursive sanitation for an array
-	 *
-	 * @param $array
-	 *
-	 * @return mixed
-	 */
-	public static function recursive_sanitize_text_field($array)
-	{
-		foreach ($array as $key => &$value) {
-			if (is_array($value)) {
-				$value = self::recursive_sanitize_text_field($value);
-			} else {
-				$value = sanitize_text_field($value);
-			}
-		}
+  /**
+   * Recursive sanitation for an array
+   *
+   * @param $array
+   *
+   * @return mixed
+   */
+  public static function recursive_sanitize_text_field($array)
+  {
+    foreach ($array as $key => &$value) {
+      if (is_array($value)) {
+        $value = self::recursive_sanitize_text_field($value);
+      } else {
+        $value = sanitize_text_field($value);
+      }
+    }
 
-		return $array;
-	}
+    return $array;
+  }
 
-	public static function separator()
-	{
-		return [
-			'title'       => '',
-			'type'        => 'title',
-			'description' => '<hr>'
-		];
-	}
+  public static function separator()
+  {
+    return [
+      'title'       => '',
+      'type'        => 'title',
+      'description' => '<hr>'
+    ];
+  }
 
   public static function divider()
   {
     return array(
       'id'          => PREFIX . '_divider',
-      'name'       => __('',PREFIX . 'woocommerce-settings-tab'),
+      'name'       => __('', PREFIX . 'woocommerce-settings-tab'),
       'type'        => 'title',
       'desc' => '<hr>'
     );
@@ -107,15 +107,17 @@ class ZIPPY_Pay_Core
    * @return string
    */
 
-   public static function get_reference($order_id)
-   {
-     return $_SERVER['HTTP_HOST'] . '_' .$order_id;
-   }
+  public static function get_reference($order_id)
+  {
+    return $_SERVER['HTTP_HOST'] . '_' . $order_id;
+  }
 
-   public static function get_domain_name()
-   {
-     return $_SERVER['HTTP_HOST'];
-   }
+  public static function get_domain_name()
+  {
+    $domain_name = explode(".", $_SERVER['HTTP_HOST']);
+    $domain = isset($domain_name[0]) ? $domain_name[0] : $_SERVER['HTTP_HOST'];
+    return $domain;
+  }
 
   /**
    * Retrieves the shop domain used for generating origin keys.
@@ -126,7 +128,7 @@ class ZIPPY_Pay_Core
   {
 
     $incl_port = get_option('incl_server_port', 'yes');
-    $protocol  = $_SERVER['HTTPS'] === 'on' ? 'https://' : 'http://';
+    $protocol  = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https://' : 'http://';
     $port      = in_array($_SERVER['SERVER_PORT'], ['80', '443']) ? '' : ':' . $_SERVER['SERVER_PORT'];
     $domain    = 'yes' === $incl_port ? $protocol . $_SERVER['HTTP_HOST'] . $port : $protocol . $_SERVER['HTTP_HOST'];
 
@@ -140,43 +142,44 @@ class ZIPPY_Pay_Core
   }
 
   /**
-    * Gets content of a given path file.
-    *
-    * @param string $template_name - the end part of the file path including the template name
-    * @param array $vars - arguments passed to the template
-    * @param string $absolute_path - plugin's DIR_PATH
-    * @param mixed $relative_path - relative path added between the absolute path and the template name
-    * @return string $content
-    */
-    public static function get_template($template_name, $vars = array(), $absolute_path = '', $relative_path = ''){
+   * Gets content of a given path file.
+   *
+   * @param string $template_name - the end part of the file path including the template name
+   * @param array $vars - arguments passed to the template
+   * @param string $absolute_path - plugin's DIR_PATH
+   * @param mixed $relative_path - relative path added between the absolute path and the template name
+   * @return string $content
+   */
+  public static function get_template($template_name, $vars = array(), $absolute_path = '', $relative_path = '')
+  {
 
-      extract($vars);
+    extract($vars);
 
-      $content = '';
+    $content = '';
 
-      $template_name = empty( $absolute_path ) && empty( $relative_path ) ? $template_name : trim( $template_name, "/\\" );
-      $absolute_path = empty( $absolute_path ) ? '' : trailingslashit( $absolute_path );
-      $relative_path = empty( $relative_path ) ? '' : trailingslashit( trim( $relative_path, "/\\" ) );
+    $template_name = empty($absolute_path) && empty($relative_path) ? $template_name : trim($template_name, "/\\");
+    $absolute_path = empty($absolute_path) ? '' : trailingslashit($absolute_path);
+    $relative_path = empty($relative_path) ? '' : trailingslashit(trim($relative_path, "/\\"));
 
-      $template = $absolute_path . $relative_path . $template_name;
+    $template = $absolute_path . $relative_path . $template_name;
 
-      //check for template in plugin's folder `includes/`
-      if(file_exists(ZIPPY_PAY_DIR_PATH . $relative_path . $template_name)){
-         $template = ZIPPY_PAY_DIR_PATH . $relative_path . $template_name;
-      }
+    //check for template in plugin's folder `includes/`
+    if (file_exists(ZIPPY_PAY_DIR_PATH . $relative_path . $template_name)) {
+      $template = ZIPPY_PAY_DIR_PATH . $relative_path . $template_name;
+    }
 
-      $template = apply_filters_deprecated(PREFIX . '\util\get_template\path_file', [ $template, $vars ], '1.0.0', PREFIX . '\util\get_template\template');
-      $template = apply_filters( PREFIX . '\util\get_template\template', $template, $template_name, $absolute_path, $relative_path);
+    $template = apply_filters_deprecated(PREFIX . '\util\get_template\path_file', [$template, $vars], '1.0.0', PREFIX . '\util\get_template\template');
+    $template = apply_filters(PREFIX . '\util\get_template\template', $template, $template_name, $absolute_path, $relative_path);
 
-      if(file_exists($template)){
+    if (file_exists($template)) {
 
-         ob_start();
+      ob_start();
 
-         include $template;
+      include $template;
 
-         $content = ob_get_clean();
-      }
+      $content = ob_get_clean();
+    }
 
-      return $content;
-   }
+    return $content;
+  }
 }

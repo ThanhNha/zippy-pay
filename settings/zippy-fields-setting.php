@@ -83,11 +83,14 @@ class ZIPPY_Fields_Setting
   function zippy_credit_card_settings($current_section = '')
   {
 
-    $enable_credit_card =  WC_Admin_Settings::get_option(PREFIX . '_enable_credit_card');
+    $credit_card_config = get_option('zippy_configs_adyen');
 
+    if(empty($credit_card_config)) return;
+
+    $credit_cards = $credit_card_config->paymentMethods->paymentMethods[0]->brands;
 
     echo ZIPPY_Pay_Core::get_template('credit-card/setting-fields.php', [
-      'test' => $enable_credit_card,
+      'cards' => $credit_cards,
 
     ], dirname(__FILE__), '/templates');
   }

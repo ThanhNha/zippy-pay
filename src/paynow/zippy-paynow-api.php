@@ -17,7 +17,7 @@ class ZIPPY_Paynow_Api
   public function __construct()
   {
     $this->client = new Client([
-      'base_uri' => 'http://192.168.1.24:4466/',
+      'base_uri' => 'https://rest.zippy.sg/',
       'headers' => [
         'Content-Type' => 'application/json',
       ],
@@ -29,12 +29,13 @@ class ZIPPY_Paynow_Api
   /**
    * Check Paynow Active or not
    */
-  public function checkPaynowIsActive()
+  public function checkPaynowIsActive($merchant_id)
   {
+
     try {
       $response = $this->client->get(
         "v1/payment/ecommerce/paymentoptions",
-        ['query' => ['merchantId' => '445adf53-3a26-4296-8723-b6a28299f712', 'paymentOption' => 'paynow']]
+        ['query' => ['merchantId' => $merchant_id, 'paymentOption' => 'paynow']]
       );
 
       $statusCode = $response->getStatusCode();
@@ -110,9 +111,8 @@ class ZIPPY_Paynow_Api
   /**
    * Send to check the status order
    */
-  public function checkStatusOrder($order_id)
+  public function checkStatusOrder($merchant_id, $order_id)
   {
-    $merchant_id = get_option(PREFIX . '_merchant_id');
 
     try {
       $response = $this->client->get(

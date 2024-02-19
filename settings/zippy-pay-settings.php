@@ -234,7 +234,7 @@ class ZIPPY_Pay_Settings extends WC_Settings_Page
     $payment_settings = get_option($id_payment);
 
     if ($is_active_tab) {
-      $payment_status = is_array($payment_settings) ? $payment_settings['enabled'] : 'yes';
+      $payment_status = is_array($payment_settings) ? $payment_settings['enabled'] : '';
     } else {
       $payment_status = isset($payment_settings['enabled']) ? $payment_settings['enabled'] : $payment_settings;
     }

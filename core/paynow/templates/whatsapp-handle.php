@@ -6,9 +6,11 @@
 
 /** @var $user_contact */
 
+/** @var $type */
+
 ?>
 
-<?php if (isset($domain) && isset($user_contact)) : ?>
+<?php if (isset($domain) && isset($user_contact) && $type == 'manual') : ?>
   <script>
     window.onload = function() {
       var link = document.createElement('a');

@@ -30,8 +30,6 @@ class ZIPPY_Paynow_Payment
 
     $total = $this->order->get_total();
 
-    $merchant_id = get_option(PREFIX . '_merchant_id');
-
     $callback_url = str_replace('https:', 'http:', add_query_arg(array(
       'wc-api'      => 'zippy_paynow_transaction',
       'order_id'     => $order_id
@@ -45,23 +43,26 @@ class ZIPPY_Paynow_Payment
 
     $key = get_option(PREFIX . '_secret_key');
 
-    $payload_2 = array(
-      "data" => $this->encryptString($payload, $key)
+    $payload_encode = array(
+      "Data" => $this->encodePayload($payload, $key)
     );
 
-    return $payload_2;
+    return $payload_encode;
   }
 
-  public function encryptString($string, $secretKey)
+  function encodePayload($payload, $key)
+
   {
-    $jsonString = json_encode($string);
-    $method = 'aes-256-cbc';
-    $key = substr(hash('sha256', $secretKey), 0, 32);
-    $iv = random_bytes(16);
+    $string = json_encode($payload);
 
-    $encrypted = openssl_encrypt($jsonString, $method, $key, 0, $iv);
-    $encoded = base64_encode($jsonString);
+    $ivSize = openssl_cipher_iv_length('AES-256-CBC');
 
-    return $encoded;
+    $hash = hash('sha256', $key, true);
+
+    $iv = openssl_random_pseudo_bytes($ivSize);
+
+    $encrypted = openssl_encrypt($string, 'AES-256-CBC', $hash, OPENSSL_RAW_DATA, $iv);
+
+    return base64_encode($iv . $encrypted);
   }
 }

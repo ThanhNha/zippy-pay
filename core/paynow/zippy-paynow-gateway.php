@@ -63,7 +63,8 @@ class ZIPPY_Paynow_Gateway extends WC_Payment_Gateway
 		echo ZIPPY_Pay_Core::get_template('message-fields.php', [
 			'is_active' => 	$is_active,
 		], dirname(__FILE__), '/templates');
-		//Popup 
+
+		//Popup
 		echo ZIPPY_Pay_Core::get_template('pop-up-noti.php', [
 			'is_active' => 	$is_active,
 		], dirname(__FILE__), '/templates');
@@ -161,6 +162,10 @@ class ZIPPY_Paynow_Gateway extends WC_Payment_Gateway
 	public function handle_send_message_whatsapp($order_id)
 	{
 		//Send massage by Whatsapp
+		$config_infor = get_option('zippy_configs_paynow');
+
+		$type = isset($config_infor) ? $config_infor->paymentType : '';
+
 		$domain = ZIPPY_Pay_Core::get_domain_name();
 
 		$config_infor = get_option('zippy_configs_paynow');
@@ -170,6 +175,7 @@ class ZIPPY_Paynow_Gateway extends WC_Payment_Gateway
 		echo ZIPPY_Pay_Core::get_template('whatsapp-handle.php', [
 			'user_contact' => $user_contact,
 			'domain' => $domain,
+			'type' => $type
 
 		], dirname(__FILE__), '/templates');
 	}
@@ -183,6 +189,8 @@ class ZIPPY_Paynow_Gateway extends WC_Payment_Gateway
 		// Check status order 
 		$order_id = intval($_REQUEST['order_id']);
 
+		$merchant_id = get_option(PREFIX . '_merchant_id');
+
 		$order = new WC_Order($order_id);
 
 		if (!isset($_REQUEST['order_id']) || empty($_REQUEST['order_id'])) {
@@ -192,7 +200,7 @@ class ZIPPY_Paynow_Gateway extends WC_Payment_Gateway
 
 		$api = new ZIPPY_Paynow_Api();
 
-		$status = $api->checkStatusOrder($order_id);
+		$status = $api->checkStatusOrder($merchant_id, $order_id);
 
 		return $this->check_order_status($status, $order);
 	}
@@ -241,7 +249,9 @@ class ZIPPY_Paynow_Gateway extends WC_Payment_Gateway
 	{
 		$api = new ZIPPY_Paynow_Api();
 
-		$checkPaynowStatus = $api->checkPaynowIsActive();
+		$merchant_id = get_option(PREFIX . '_merchant_id');
+
+		$checkPaynowStatus = $api->checkPaynowIsActive($merchant_id);
 
 		if (empty($checkPaynowStatus['data']) || !$checkPaynowStatus['status']) return false;
 

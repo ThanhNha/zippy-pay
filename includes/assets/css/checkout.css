@@ -75,6 +75,16 @@
 .woocommerce-checkout #payment #zippy-container img {
   margin: 0;
 }
+.woocommerce-checkout #payment #zippy-container button {
+  margin: 0 !important;
+  border: none !important;
+  background-color: none !important ;
+  padding: 4px !important;
+  font-size: 1em !important;
+  font-weight: 400 !important;
+  color: #00112c !important;
+  margin-right: 16px !important;
+}
 .woocommerce-checkout #payment .zippy-has-error {
   color: red;
   font-size: 14px;

@@ -1,31 +1,18 @@
 <?php
 
-namespace ZIPPY_Pay\Adyen;
+namespace ZIPPY_Pay\Core\Adyen;
 
 use Throwable;
-use ZIPPY_Pay\Core\Adyen\ZIPPY_Adyen_Pay_Api;
 use ZIPPY_Pay\Core\ZIPPY_Pay_Core;
 use WC_Order;
 use Exception;
 use ZIPPY_Pay\Src\Logs\ZIPPY_Pay_Logger;
+use ZIPPY_Pay\Src\Adyen\ZIPPY_Adyen_Api;
+
 use WC_Admin_Settings;
 
 class ZIPPY_Pay_Adyen
 {
-	/**
-	 * @var ZIPPY_Pay_Adyen_Config
-	 */
-	private $adyenConfig;
-
-	/**
-	 * Adyen constructor.
-	 *
-	 * @param ZIPPY_Pay_Adyen_Config $adyenConfig
-	 */
-	public function __construct($adyenConfig)
-	{
-		$this->adyenConfig = $adyenConfig;
-	}
 
 	/**
 	 * @param $url
@@ -39,7 +26,10 @@ class ZIPPY_Pay_Adyen
 	public function get_token($url)
 	{
 
-		$token = ZIPPY_Adyen_Pay_Api::get_token_from_zippy($url);
+
+		$api = new ZIPPY_Adyen_Api();
+
+		$token = $api->getTokenFromZippy();
 
 		return $token;
 	}
@@ -54,17 +44,17 @@ class ZIPPY_Pay_Adyen
 	 */
 	public function pay($order, $adyen_payment_data)
 	{
-		$url = 'http://192.168.1.35:4466';
+		$api = new ZIPPY_Adyen_Api();
 
 		try {
 			$payload = $this->build_payment_payload($order, $adyen_payment_data);
 
-			$result = ZIPPY_Adyen_Pay_Api::checkout($url, $payload);
+			$result = $api->adyenCheckout($payload);
 
 			if (is_numeric($result)) {
-				$token = $this->get_token($url, false);
+				$token = $this->get_token(false);
 
-				$result = ZIPPY_Adyen_Pay_Api::checkout($url, $payload, $token);
+				$result = $api->adyenCheckout($payload, $token);
 			}
 
 			if (!$result || !isset($result->Result)) {
@@ -87,18 +77,20 @@ class ZIPPY_Pay_Adyen
 	public function get_transaction_status($order_key)
 	{
 
-		$url = 'http://192.168.1.35:4466';
+		$api = new ZIPPY_Adyen_Api();
+
 		$current_time = date('Y-m-d H:i:s.v');
+
 		$params = array(
 			"orderNumber" => ZIPPY_Pay_Core::get_merchant_reference($order_key),
 			"updatedFrom" => $current_time
 		);
 		try {
-			$status = ZIPPY_Adyen_Pay_Api::transactionStatus($url, $params);
+			$status = $api->getTransactionStatus($params);
 
 			if (is_numeric($status)) {
-				$token = $this->get_token($url, false);
-				$status = ZIPPY_Adyen_Pay_Api::transactionStatus($url, $params, $token);
+				$token = $this->get_token(false);
+				$status = $api->getTransactionStatus($params, $token);
 			}
 			if (!$status && !isset($status->result)) {
 				throw new Exception("Missing Transaction Status Of Adyen.");
@@ -115,15 +107,18 @@ class ZIPPY_Pay_Adyen
 	 *
 	 * @return mixed
 	 */
-	public function get_payment_config($url)
+	public function get_payment_config()
 	{
-		$url = 'http://192.168.1.35:4466';
 		try {
-			$paymentConfig              = ZIPPY_Adyen_Pay_Api::getConfigs($url);
+			$api = new ZIPPY_Adyen_Api();
+
+			$paymentConfig              = $api->getConfigs();
+
 			if (is_numeric($paymentConfig)) {
-				$token = $this->get_token($url, false);
-				$paymentConfig              = ZIPPY_Adyen_Pay_Api::getConfigs($url, $token);
+				$token = $this->get_token(false);
+				$paymentConfig              = $api->getConfigs($token);
 			}
+
 			if (!$paymentConfig || !isset($paymentConfig->result)) {
 				throw new Exception("Missing Payment Adyen Configs.");
 			}

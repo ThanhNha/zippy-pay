@@ -99,11 +99,31 @@ class ZIPPY_Paynow_Gateway extends WC_Payment_Gateway
 
 	private function handle_do_payment($order)
 	{
+		//check order status first
+		$api = new ZIPPY_Paynow_Api();
 
-		// if ($is_active = $this->is_gateway_configured()) {
-		// 	return $this->handle_payment_failed();
-		// }
+		$order_id = $order->get_id();
 
+		$merchant_id = get_option(PREFIX . '_merchant_id');
+
+		$amout = $order->get_total();
+
+		$status = $api->checkStatusOrder($merchant_id, $order_id, $amout);
+
+		if (isset($status) && $status->result->status == "completed") {
+			delete_option('zippy_paynow_redirect_object_' .	$order_id);
+
+			$order->add_order_note(sprintf(__('Payment was complete via ' . PAYMENT_PAYNOW_NAME, PREFIX . '_zippy_payment')));
+
+			$order->payment_complete();
+
+			// should get payment details to log in the order.
+
+			return [
+				'result'   => 'success',
+				'redirect' => $this->get_return_url($order)
+			];
+		}
 		// always redirect to Zippy
 		return $this->handle_payment_redirect($order);
 	}
@@ -162,6 +182,8 @@ class ZIPPY_Paynow_Gateway extends WC_Payment_Gateway
 	public function handle_send_message_whatsapp($order_id)
 	{
 		//Send massage by Whatsapp
+		if (empty($order_id)) return;
+
 		$config_infor = get_option('zippy_configs_paynow');
 
 		$type = isset($config_infor) ? $config_infor->paymentType : '';
@@ -175,7 +197,8 @@ class ZIPPY_Paynow_Gateway extends WC_Payment_Gateway
 		echo ZIPPY_Pay_Core::get_template('whatsapp-handle.php', [
 			'user_contact' => $user_contact,
 			'domain' => $domain,
-			'type' => $type
+			'type' => $type,
+			'order_id' => $order_id
 
 		], dirname(__FILE__), '/templates');
 	}
@@ -193,6 +216,8 @@ class ZIPPY_Paynow_Gateway extends WC_Payment_Gateway
 
 		$order = new WC_Order($order_id);
 
+		$amout = $order->get_total();
+
 		if (!isset($_REQUEST['order_id']) || empty($_REQUEST['order_id'])) {
 			wp_redirect($order->get_checkout_payment_url());
 			exit;
@@ -200,7 +225,7 @@ class ZIPPY_Paynow_Gateway extends WC_Payment_Gateway
 
 		$api = new ZIPPY_Paynow_Api();
 
-		$status = $api->checkStatusOrder($merchant_id, $order_id);
+		$status = $api->checkStatusOrder($merchant_id, $order_id, $amout);
 
 		return $this->check_order_status($status, $order);
 	}

@@ -78,7 +78,7 @@
 .woocommerce-checkout #payment #zippy-container button {
   margin: 0 !important;
   border: none !important;
-  background-color: none !important ;
+  background: none !important ;
   padding: 4px !important;
   font-size: 1em !important;
   font-weight: 400 !important;
@@ -88,6 +88,15 @@
 .woocommerce-checkout #payment .zippy-has-error {
   color: red;
   font-size: 14px;
+}
+
+#payment_method_zippy_adyen_payment{
+  display: inline-block !important;
+  margin-top: 5px !important;
+}
+.payment_box.payment_method_zippy_adyen_payment{
+  padding-left: 0px !important;
+  padding-right: 0px !important;
 }
 
 /* Paynow Css  */

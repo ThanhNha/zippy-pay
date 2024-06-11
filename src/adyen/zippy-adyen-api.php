@@ -153,6 +153,7 @@ class ZIPPY_Adyen_Api
 
     unset($params['paymentMethod'], $params['browserInfo'], $params['returnUrl']);
 
+
     $path = '/v1/payment/adyen/ecommerce/payment';
 
     $timestamp = time();

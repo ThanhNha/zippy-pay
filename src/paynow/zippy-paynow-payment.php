@@ -30,7 +30,7 @@ class ZIPPY_Paynow_Payment
 
     $total = $this->order->get_total();
 
-    $callback_url = str_replace('https:', 'http:', add_query_arg(array(
+    $callback_url = str_replace('https:', 'https:', add_query_arg(array(
       'wc-api'      => 'zippy_paynow_transaction',
       'order_id'     => $order_id
     ), home_url('/')));

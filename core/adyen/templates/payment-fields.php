@@ -11,22 +11,33 @@
   <script type="application/javascript">
     jQuery(document).ready(function() {
 
+      var cardBrand = '';
+
       handleChooseMethodPayment();
 
       function handleChooseMethodPayment() {
+
+        var payment_methods = jQuery('#payment input[type="radio"]');
+
+        if (payment_methods.length == 1) {
+          startCheckout();
+          return;
+        }
+
         jQuery("#payment_method_zippy_adyen_payment").prop('checked', false);
+
         jQuery("#payment_method_zippy_adyen_payment").change(function() {
 
           if (jQuery(this).is(':checked')) {
             startCheckout();
           }
         });
+
       }
 
       function handleOnChange(state, component) {
-
         if (state.isValid === true) {
-          console.log(JSON.stringify(state.data));
+          state.data.paymentMethod.brand = cardBrand;
           jQuery('#zippy_pay_payment_data').val(JSON.stringify(state.data));
         }
 
@@ -71,10 +82,12 @@
               holderNameRequired: true,
               billingAddressRequired: false,
               hideCVC: false,
-
+             onBrand: (info) => {
+                cardBrand = info?.brand ?? '';
+              }
             }
           },
-          onChange: handleOnChange,
+         onChange: handleOnChange,
         })
       }
     });

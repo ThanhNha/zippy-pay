@@ -111,13 +111,13 @@ class ZIPPY_Paynow_Api
   /**
    * Send to check the status order
    */
-  public function checkStatusOrder($merchant_id, $order_id, $amout)
+  public function checkStatusOrder($merchant_id, $order_id, $amount)
   {
 
     try {
       $response = $this->client->get(
         "v1/payment/paynow/transaction",
-        ['query' => ['merchantId' => $merchant_id, 'orderId' => $order_id, 'amount' => $amout]]
+        ['query' => ['merchantId' => $merchant_id, 'orderId' => $order_id,'amount' => $amount]]
       );
       $statusCode = $response->getStatusCode();
       if ($statusCode === 200) {

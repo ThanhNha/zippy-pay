@@ -3,7 +3,7 @@
  * Plugin Name:       Zippy Pay
  * Plugin URI:
  * Description:       Accept adyen payments on your WooCommerce shop
- * Version:           2.0.0
+ * Version:           2.1.0
  * WC requires at least: 3.0
  * WC tested up to: 6.7
  * Author:            Zippy

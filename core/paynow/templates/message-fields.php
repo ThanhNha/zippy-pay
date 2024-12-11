@@ -10,22 +10,35 @@
       "use strict";
       $ = jQuery;
       $(document).ready(function() {
-        var paynow_checkbox = $("#payment_method_zippy_paynow_payment");
+        handleChoosePaynowPayment();
 
-        $("#payment_method_zippy_paynow_payment").prop("checked", false);
+        function handleChoosePaynowPayment() {
 
-        var btn_paynow = $("#paynow-cofirm");
+          var payment_methods = jQuery('#payment input[type="radio"]');
 
-        paynow_checkbox.click(function() {
-          if ($(this).is(":checked")) {
-            openPopup();
+          if (payment_methods.length == 1) {
+            $("#payment_method_zippy_paynow_payment").prop("checked", true);
           }
-        });
+        }
 
-        btn_paynow.click(function(e) {
-          e.preventDefault();
-          closePopup();
-        });
+        if (isMobile()) {
+          var paynow_checkbox = $("#payment_method_zippy_paynow_payment");
+
+          $("#payment_method_zippy_paynow_payment").prop("checked", false);
+
+          var btn_paynow = $("#paynow-cofirm");
+
+          paynow_checkbox.click(function() {
+            if ($(this).is(":checked")) {
+              openPopup();
+            }
+          });
+
+          btn_paynow.click(function(e) {
+            e.preventDefault();
+            closePopup();
+          });
+        }
 
         function openPopup() {
           var pop_up = $("#paynow-pop-up");
@@ -39,6 +52,16 @@
           pop_up.removeClass("active");
           pop_up.hide();
           $('body').removeClass("paynow-pop-up-open");
+        }
+
+        function isMobile() {
+          const width = window.innerWidth;
+
+          if (width <= 1024) {
+            return true;
+          } else {
+            return false;
+          }
         }
       });
     </script>

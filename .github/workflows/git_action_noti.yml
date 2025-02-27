@@ -13,6 +13,7 @@ on:
     branches:
       - update-*
       - main
+      - shin
 jobs:
   create-pull-request:
     runs-on: ubuntu-latest

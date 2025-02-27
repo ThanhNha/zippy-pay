@@ -3,6 +3,9 @@
 namespace ZIPPY_Pay\Core\Adyen;
 
 use ZIPPY_Pay\Core\Adyen\ZIPPY_Adyen_Pay_Gateway;
+
+use ZIPPY_Pay\Core\ZIPPY_Pay_Core;
+
 use ZIPPY_Pay\Settings\ZIPPY_Pay_Settings;
 
 class ZIPPY_Adyen_Pay_Integration
@@ -32,7 +35,7 @@ class ZIPPY_Adyen_Pay_Integration
     public function __construct()
     {
 
-        if (!$this->is_woocommerce_active()) {
+        if (!ZIPPY_Pay_Core::is_woocommerce_active()) {
             return;
         }
         add_filter('woocommerce_get_settings_pages', [$this, 'setting_page']);
@@ -85,17 +88,5 @@ class ZIPPY_Adyen_Pay_Integration
     public function zippy_payment_load_plugin_textdomain()
     {
         load_plugin_textdomain('payment-gateway-for-adyen-and-woocommerce', false, basename(dirname(__FILE__)) . '/languages/');
-    }
-
-
-    private function is_woocommerce_active()
-    {
-        $active_plugins = (array) get_option('active_plugins', array());
-
-        if (is_multisite()) {
-            $active_plugins = array_merge($active_plugins, get_site_option('active_sitewide_plugins', array()));
-        }
-
-        return in_array('woocommerce/woocommerce.php', $active_plugins) || array_key_exists('woocommerce/woocommerce.php', $active_plugins);
     }
 }

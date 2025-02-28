@@ -25,7 +25,7 @@ class ZIPPY_Antom_Gateway extends WC_Payment_Gateway
 		$this->has_fields   = true;
 		$this->init_form_fields();
 		$this->init_settings();
-		$this->title = 'EPOS Pay (Antom)';
+		$this->title = PAYMENT_ANTOM_NAME;
 		$this->method_description = __('', PREFIX . '_zippy_payment');
 		$this->enabled         = $this->get_option('enabled');
 		// add_action('woocommerce_receipt_' . $this->id, [$this, 'receipt_page']);
@@ -63,10 +63,6 @@ class ZIPPY_Antom_Gateway extends WC_Payment_Gateway
 			'is_active' => 	$is_active,
 		], dirname(__FILE__), '/templates');
 
-		//Popup
-		echo ZIPPY_Pay_Core::get_template('pop-up-noti.php', [
-			'is_active' => 	$is_active,
-		], dirname(__FILE__), '/templates');
 	}
 
 	/**

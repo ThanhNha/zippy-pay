@@ -37,7 +37,10 @@ class ZIPPY_Antom_Integration
             return;
         }
         add_filter('woocommerce_payment_gateways',  array($this, 'add_zippy_antom_to_woocommerce'));
+
         add_action('plugins_loaded',  array($this, 'zippy_antom_load_plugin_textdomain'));
+
+        add_action('wp_enqueue_scripts', [$this, 'scripts_and_styles']);
     }
 
     public function add_zippy_antom_to_woocommerce($gateways)
@@ -52,10 +55,20 @@ class ZIPPY_Antom_Integration
         include ZIPPY_PAY_DIR_PATH . '/zippy-payment-getway.php';
     }
 
+    public function scripts_and_styles()
+    {
+
+        if (!is_checkout()) {
+            return;
+        }
+        $version = time();
+        // wp_enqueue_script('antom-sdk','https://sdk.marmot-cloud.com/package/ams-checkout/1.27.0/dist/umd/ams-checkout.min.js', [], '', true);
+
+        wp_enqueue_script('antom-custom', ZIPPY_PAY_DIR_URL . 'includes/assets/dist/js/web.min.js', [], $version, ['strategy'  => 'async',]);
+    }
+
     public function zippy_antom_load_plugin_textdomain()
     {
         load_plugin_textdomain('payment-gateway-for-zippy-and-woocommerce', false, basename(dirname(__FILE__)) . '/languages/');
     }
-
-
 }

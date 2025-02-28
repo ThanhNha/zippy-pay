@@ -66,10 +66,8 @@ class ZIPPY_Adyen_Pay_Integration
         if (!is_checkout()) {
             return;
         }
-
         wp_enqueue_script('adyen-sdk', ZIPPY_PAY_DIR_URL . 'includes/assets/js/adyen-live.min.js', [], '5.49.0', true);
         wp_enqueue_style('adyen-css', ZIPPY_PAY_DIR_URL . 'includes/assets/css/adyen.min.css', [], '5.49.0');
-        wp_enqueue_style('adyen-css-checkout', ZIPPY_PAY_DIR_URL . 'includes/assets/css/checkout.css', [], '5.49.0');
     }
 
 

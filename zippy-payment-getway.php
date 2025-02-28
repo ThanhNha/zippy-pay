@@ -20,6 +20,7 @@ use ZIPPY_Pay\Core\Adyen\ZIPPY_Adyen_Pay_Integration;
 use ZIPPY_Pay\Core\Paynow\ZIPPY_Paynow_Integration;
 use ZIPPY_Pay\Core\Antom\ZIPPY_Antom_Integration;
 use ZIPPY_Pay\Settings\Zippy_Pay_Ajax_Handle;
+use ZIPPY_Pay\Core\ZIPPY_Pay_Core;
 
 define('ZIPPY_PAY_DIR_URL', plugin_dir_url(__FILE__));
 define('ZIPPY_PAY_DIR_PATH', plugin_dir_path(__FILE__));
@@ -35,6 +36,8 @@ define('PAYMENT_ANTOM_ID', 'zippy_antom_payment');
 
 require ZIPPY_PAY_DIR_PATH . '/vendor/autoload.php';
 require ZIPPY_PAY_DIR_PATH . '/includes/autoload.php';
+
+ZIPPY_Pay_Core::global_style();
 
 ZIPPY_Adyen_Pay_Integration::get_instance();
 

@@ -28,7 +28,7 @@ class ZIPPY_Antom_Gateway extends WC_Payment_Gateway
 		$this->title = PAYMENT_ANTOM_NAME;
 		$this->method_description = __('', PREFIX . '_zippy_payment');
 		$this->enabled         = $this->get_option('enabled');
-		// add_action('woocommerce_receipt_' . $this->id, [$this, 'receipt_page']);
+		add_action('woocommerce_receipt_' . $this->id, [$this, 'receipt_page']);
 		// add_action('woocommerce_thankyou_' . $this->id, [$this, 'handle_send_message_whatsapp']);
 		// add_action('woocommerce_update_options_payment_gateways_' . $this->id, [$this, 'process_admin_options']);
 		// add_action('woocommerce_api_zippy_paynow_transaction', [$this, 'handle_redirect']);
@@ -59,10 +59,9 @@ class ZIPPY_Antom_Gateway extends WC_Payment_Gateway
 	{
 		$is_active = $this->is_gateway_configured();
 
-		echo ZIPPY_Pay_Core::get_template('message-fields.php', [
+		echo ZIPPY_Pay_Core::get_template('payment-section.php', [
 			'is_active' => 	$is_active,
 		], dirname(__FILE__), '/templates');
-
 	}
 
 	/**
@@ -110,22 +109,6 @@ class ZIPPY_Antom_Gateway extends WC_Payment_Gateway
 	private function handle_payment_redirect($order)
 	{
 
-		$order_id = $order->get_id();
-
-		$paynow = new ZIPPY_Paynow_Payment($order);
-
-		$api = new ZIPPY_Paynow_Api();
-
-		$paynow_payload = $paynow->build_payment_payload();
-
-		$paynow_response = $api->paynowPayment($paynow_payload);
-
-		if (!isset($paynow_response->Result->redirectUrl)) {
-			return $this->handle_payment_failed();
-		}
-
-		update_option('zippy_paynow_redirect_object_' . $order_id, $paynow_response);
-
 		return  [
 			'result'   => 'success',
 			'redirect' => $order->get_checkout_payment_url(true)
@@ -139,14 +122,18 @@ class ZIPPY_Antom_Gateway extends WC_Payment_Gateway
 	public function receipt_page($order_id)
 	{
 
-		$redirectData = get_option('zippy_paynow_redirect_object_' . $order_id);
+		echo ZIPPY_Pay_Core::get_template('payment-page.php', [
+			'order_id' => 	$order_id,
+		], dirname(__FILE__), '/templates');
 
-		if (!isset($redirectData) || empty($redirectData)) {
-			wp_safe_redirect(get_checkout_payment_url(), '301');
-			$this->add_notice();
-		}
+		// $redirectData = get_option('zippy_paynow_redirect_object_' . $order_id);
 
-		wp_redirect($redirectData->Result->redirectUrl);
+		// if (!isset($redirectData) || empty($redirectData)) {
+		// 	wp_safe_redirect(get_checkout_payment_url(), '301');
+		// 	$this->add_notice();
+		// }
+
+		// wp_redirect($redirectData->Result->redirectUrl);
 	}
 
 
@@ -197,7 +184,7 @@ class ZIPPY_Antom_Gateway extends WC_Payment_Gateway
 
 		$api = new ZIPPY_Paynow_Api();
 
-		$status = $api->checkStatusOrder($merchant_id, $order_id , $amount);
+		$status = $api->checkStatusOrder($merchant_id, $order_id, $amount);
 
 		return $this->check_order_status($status, $order);
 	}
@@ -244,15 +231,16 @@ class ZIPPY_Antom_Gateway extends WC_Payment_Gateway
 
 	private function is_gateway_configured()
 	{
-		$api = new ZIPPY_Paynow_Api();
+		$is_active = true;
+		// $api = new ZIPPY_Paynow_Api();
 
-		$merchant_id = get_option(PREFIX . '_merchant_id');
+		// // $merchant_id = get_option(PREFIX . '_merchant_id');
 
-		$checkPaynowStatus = $api->checkPaynowIsActive($merchant_id);
+		// // $checkPaynowStatus = $api->checkPaynowIsActive($merchant_id);
 
-		if (empty($checkPaynowStatus['data']) || !$checkPaynowStatus['status']) return false;
+		// if (empty($checkPaynowStatus['data']) || !$checkPaynowStatus['status']) return false;
 
-		$is_active = $checkPaynowStatus['data']->result->paynowConfig;
+		// $is_active = $checkPaynowStatus['data']->result->paynowConfig;
 
 		return 	$is_active;
 	}

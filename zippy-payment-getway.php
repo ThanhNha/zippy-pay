@@ -21,6 +21,7 @@ use ZIPPY_Pay\Core\Paynow\ZIPPY_Paynow_Integration;
 use ZIPPY_Pay\Core\Antom\ZIPPY_Antom_Integration;
 use ZIPPY_Pay\Settings\Zippy_Pay_Ajax_Handle;
 use ZIPPY_Pay\Core\ZIPPY_Pay_Core;
+use ZIPPY_Pay\Src\Woocommerce\Zippy_Woo_Template;
 
 define('ZIPPY_PAY_DIR_URL', plugin_dir_url(__FILE__));
 define('ZIPPY_PAY_DIR_PATH', plugin_dir_path(__FILE__));
@@ -38,6 +39,8 @@ require ZIPPY_PAY_DIR_PATH . '/vendor/autoload.php';
 require ZIPPY_PAY_DIR_PATH . '/includes/autoload.php';
 
 ZIPPY_Pay_Core::global_style();
+
+Zippy_Woo_Template::get_instance();
 
 ZIPPY_Adyen_Pay_Integration::get_instance();
 

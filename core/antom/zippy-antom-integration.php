@@ -36,11 +36,24 @@ class ZIPPY_Antom_Integration
         if (!ZIPPY_Pay_Core::is_woocommerce_active()) {
             return;
         }
+        // add_filter('template_include', array($this, 'zippy_override_page_template'), 1, 3);
         add_filter('woocommerce_payment_gateways',  array($this, 'add_zippy_antom_to_woocommerce'));
 
         add_action('plugins_loaded',  array($this, 'zippy_antom_load_plugin_textdomain'));
 
         add_action('wp_enqueue_scripts', [$this, 'scripts_and_styles']);
+    }
+
+    public function zippy_override_page_template($template)
+    {
+        if (isset($_GET['amtom_payment']) && $_GET['amtom_payment'] === 'true') {
+            $template_directory = untrailingslashit(plugin_dir_path(__FILE__)) . "/templates/page-payment-antom.php";
+
+            if (file_exists($template_directory)) {
+                return $template_directory;
+            }
+        }
+        return $template;
     }
 
     public function add_zippy_antom_to_woocommerce($gateways)

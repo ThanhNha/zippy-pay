@@ -5,8 +5,6 @@ namespace ZIPPY_Pay\Core\Antom;
 use WC_Payment_Gateway;
 use WC_Order;
 use ZIPPY_Pay\Core\ZIPPY_Pay_Core;
-use ZIPPY_Pay\Src\Paynow\ZIPPY_Paynow_Api;
-use ZIPPY_Pay\Src\Paynow\ZIPPY_Paynow_Payment;
 
 
 defined('ABSPATH') || exit;
@@ -31,7 +29,7 @@ class ZIPPY_Antom_Gateway extends WC_Payment_Gateway
 		add_action('woocommerce_receipt_' . $this->id, [$this, 'receipt_page']);
 		// add_action('woocommerce_thankyou_' . $this->id, [$this, 'handle_send_message_whatsapp']);
 		// add_action('woocommerce_update_options_payment_gateways_' . $this->id, [$this, 'process_admin_options']);
-		// add_action('woocommerce_api_zippy_paynow_transaction', [$this, 'handle_redirect']);
+		add_action('woocommerce_api_wc_zippy_redirect', [$this, 'handle_redirect']);
 	}
 
 	/**
@@ -119,8 +117,32 @@ class ZIPPY_Antom_Gateway extends WC_Payment_Gateway
 	 * Woocomerce Custom receipt page support redirect checkout.
 	 *
 	 */
+
+	public function pr($data)
+	{
+		echo '<style>
+  #debug_wrapper {
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    z-index: 999;
+    background: #fff;
+    color: #000;
+    overflow: auto;
+    width: 100%;
+    height: 100%;
+  }</style>';
+		echo '<div id="debug_wrapper"><pre>';
+
+		print_r($data); // or var_dump($data);
+		echo "</pre></div>";
+		die;
+	}
+
 	public function receipt_page($order_id)
 	{
+		$order = new WC_Order($order_id);
+		// var_dump($alipayResponse);
 
 		echo ZIPPY_Pay_Core::get_template('payment-page.php', [
 			'order_id' => 	$order_id,
@@ -171,43 +193,44 @@ class ZIPPY_Antom_Gateway extends WC_Payment_Gateway
 		// Check status order 
 		$order_id = intval($_REQUEST['order_id']);
 
-		$merchant_id = get_option(PREFIX . '_merchant_id');
+		var_dump($order_id);
+		// 	$merchant_id = get_option(PREFIX . '_merchant_id');
 
-		$order = new WC_Order($order_id);
+		// 	$order = new WC_Order($order_id);
 
-		$amount = $order->get_total();
+		// 	$amount = $order->get_total();
 
-		if (!isset($_REQUEST['order_id']) || empty($_REQUEST['order_id'])) {
-			wp_redirect($order->get_checkout_payment_url());
-			exit;
-		}
+		// 	if (!isset($_REQUEST['order_id']) || empty($_REQUEST['order_id'])) {
+		// 		wp_redirect($order->get_checkout_payment_url());
+		// 		exit;
+		// 	}
 
-		$api = new ZIPPY_Paynow_Api();
+		// 	$api = new ZIPPY_Paynow_Api();
 
-		$status = $api->checkStatusOrder($merchant_id, $order_id, $amount);
+		// 	$status = $api->checkStatusOrder($merchant_id, $order_id, $amount);
 
-		return $this->check_order_status($status, $order);
-	}
+		// 	return $this->check_order_status($status, $order);
+		// }
 
-	private function check_order_status($status, $order)
-	{
+		// private function check_order_status($status, $order)
+		// {
 
-		$order_id = $order->get_id();
+		// 	$order_id = $order->get_id();
 
-		if (isset($status) && $status->result->status === "completed") {
+		// 	if (isset($status) && $status->result->status === "completed") {
 
-			delete_option('zippy_paynow_redirect_object_' .	$order_id);
+		// 		delete_option('zippy_paynow_redirect_object_' .	$order_id);
 
-			$order->add_order_note(sprintf(__('Payment was complete via ' . PAYMENT_PAYNOW_NAME, PREFIX . '_zippy_payment')));
+		// 		$order->add_order_note(sprintf(__('Payment was complete via ' . PAYMENT_PAYNOW_NAME, PREFIX . '_zippy_payment')));
 
-			$order->payment_complete();
+		// 		$order->payment_complete();
 
-			// should get payment details to log in the order.
+		// 		// should get payment details to log in the order.
 
-			wp_redirect($this->get_return_url($order));
-		} else {
-			wp_redirect($order->get_checkout_payment_url()); // Redirect to page pay-order to payment again.
-		}
+		// 		wp_redirect($this->get_return_url($order));
+		// 	} else {
+		// 		wp_redirect($order->get_checkout_payment_url()); // Redirect to page pay-order to payment again.
+		// 	}
 	}
 
 	/**

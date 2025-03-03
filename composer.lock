@@ -4,8 +4,53 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "045658d81f6d9d3243e731dda7bf04d1",
+    "content-hash": "8742f4f525ff79e2d8d5b40be00dff3f",
     "packages": [
+        {
+            "name": "antom/global-open-sdk-php",
+            "version": "v1.4.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/alipay/global-open-sdk-php.git",
+                "reference": "573b6ead7c267ddf4c9a293255f8eff39e0e6835"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/alipay/global-open-sdk-php/zipball/573b6ead7c267ddf4c9a293255f8eff39e0e6835",
+                "reference": "573b6ead7c267ddf4c9a293255f8eff39e0e6835",
+                "shasum": ""
+            },
+            "require": {
+                "ext-curl": "*",
+                "ext-json": "*",
+                "ext-openssl": "*"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Model\\": "model/",
+                    "Client\\": "client/",
+                    "Request\\": "request/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Alipay",
+                    "email": "wangzunjiao.wzj@alibaba-inc.com"
+                }
+            ],
+            "description": "global-open-sdk-php",
+            "homepage": "https://dashboard.alipay.com/global-payments/",
+            "support": {
+                "issues": "https://github.com/alipay/global-open-sdk-php/issues",
+                "source": "https://github.com/alipay/global-open-sdk-php/tree/v1.4.2"
+            },
+            "time": "2025-02-20T04:01:24+00:00"
+        },
         {
             "name": "guzzlehttp/guzzle",
             "version": "7.9.2",

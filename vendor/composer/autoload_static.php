@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInit045658d81f6d9d3243e731dda7bf04d1
+class ComposerStaticInit8742f4f525ff79e2d8d5b40be00dff3f
 {
     public static $files = array (
         '7b11c4dc42b3b3023073cb14e519683c' => __DIR__ . '/..' . '/ralouphie/getallheaders/src/getallheaders.php',
@@ -13,10 +13,18 @@ class ComposerStaticInit045658d81f6d9d3243e731dda7bf04d1
     );
 
     public static $prefixLengthsPsr4 = array (
+        'R' => 
+        array (
+            'Request\\' => 8,
+        ),
         'P' => 
         array (
             'Psr\\Http\\Message\\' => 17,
             'Psr\\Http\\Client\\' => 16,
+        ),
+        'M' => 
+        array (
+            'Model\\' => 6,
         ),
         'G' => 
         array (
@@ -24,9 +32,17 @@ class ComposerStaticInit045658d81f6d9d3243e731dda7bf04d1
             'GuzzleHttp\\Promise\\' => 19,
             'GuzzleHttp\\' => 11,
         ),
+        'C' => 
+        array (
+            'Client\\' => 7,
+        ),
     );
 
     public static $prefixDirsPsr4 = array (
+        'Request\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/antom/global-open-sdk-php/request',
+        ),
         'Psr\\Http\\Message\\' => 
         array (
             0 => __DIR__ . '/..' . '/psr/http-message/src',
@@ -35,6 +51,10 @@ class ComposerStaticInit045658d81f6d9d3243e731dda7bf04d1
         'Psr\\Http\\Client\\' => 
         array (
             0 => __DIR__ . '/..' . '/psr/http-client/src',
+        ),
+        'Model\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/antom/global-open-sdk-php/model',
         ),
         'GuzzleHttp\\Psr7\\' => 
         array (
@@ -48,6 +68,10 @@ class ComposerStaticInit045658d81f6d9d3243e731dda7bf04d1
         array (
             0 => __DIR__ . '/..' . '/guzzlehttp/guzzle/src',
         ),
+        'Client\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/antom/global-open-sdk-php/client',
+        ),
     );
 
     public static $classMap = array (
@@ -57,9 +81,9 @@ class ComposerStaticInit045658d81f6d9d3243e731dda7bf04d1
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInit045658d81f6d9d3243e731dda7bf04d1::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInit045658d81f6d9d3243e731dda7bf04d1::$prefixDirsPsr4;
-            $loader->classMap = ComposerStaticInit045658d81f6d9d3243e731dda7bf04d1::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInit8742f4f525ff79e2d8d5b40be00dff3f::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInit8742f4f525ff79e2d8d5b40be00dff3f::$prefixDirsPsr4;
+            $loader->classMap = ComposerStaticInit8742f4f525ff79e2d8d5b40be00dff3f::$classMap;
 
         }, null, ClassLoader::class);
     }

@@ -6,6 +6,8 @@ use ZIPPY_Pay\Core\Antom\ZIPPY_Antom_Gateway;
 
 use ZIPPY_Pay\Core\ZIPPY_Pay_Core;
 
+use ZIPPY_Pay\Src\Antom\ZIPPY_Antom_Payment;
+
 class ZIPPY_Antom_Integration
 {
 
@@ -42,6 +44,26 @@ class ZIPPY_Antom_Integration
         add_action('plugins_loaded',  array($this, 'zippy_antom_load_plugin_textdomain'));
 
         add_action('wp_enqueue_scripts', [$this, 'scripts_and_styles']);
+
+        add_action('rest_api_init', array($this, 'zippy_antom_api'));
+    }
+
+    public function zippy_antom_api(): void
+    {
+        register_rest_route(ZIPPY_PAYMENT_API_NAMESPACE, '/antom/createPaymentSession', array(
+            'methods' => 'POST',
+            'callback' => [ZIPPY_Antom_Payment::class, 'buildPaymentSession'],
+            'args' => array(
+                'order_id' => array(
+                    'required' => true,
+                    'validate_callback' => function ($param, $request, $key) {
+                        return is_numeric($param);
+                    },
+                ),
+            ),
+            'permission_callback' => '__return_true',
+
+        ));
     }
 
     public function zippy_override_page_template($template)

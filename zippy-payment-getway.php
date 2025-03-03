@@ -9,6 +9,7 @@
  * Author:            Zippy
  * Author URI:        https://zippy.sg/
  * Text Domain:       zippy-and-woocommerce
+ * Requires Plugins: woocommerce
  * license:           GPL-2.0+
  * license URI:       http://www.gnu.org/licenses/gpl-2.0.txt
  * Domain Path:       /languages
@@ -23,6 +24,10 @@ use ZIPPY_Pay\Settings\Zippy_Pay_Ajax_Handle;
 use ZIPPY_Pay\Core\ZIPPY_Pay_Core;
 use ZIPPY_Pay\Src\Woocommerce\Zippy_Woo_Template;
 
+/* Set constant enpoint to the plugin directory. */
+if (!defined('ZIPPY_BOOKING_API_NAMESPACE')) {
+  define('ZIPPY_PAYMENT_API_NAMESPACE', 'zippy-pay/v1');
+}
 define('ZIPPY_PAY_DIR_URL', plugin_dir_url(__FILE__));
 define('ZIPPY_PAY_DIR_PATH', plugin_dir_path(__FILE__));
 define('ZIPPY_PAY_ENDPOINT', plugin_dir_path(__FILE__));
@@ -35,8 +40,14 @@ define('PAYMENT_ADYEN_ID', 'zippy_adyen_payment');
 define('PAYMENT_PAYNOW_ID', 'zippy_paynow_payment');
 define('PAYMENT_ANTOM_ID', 'zippy_antom_payment');
 
-require ZIPPY_PAY_DIR_PATH . '/vendor/autoload.php';
-require ZIPPY_PAY_DIR_PATH . '/includes/autoload.php';
+require_once ZIPPY_PAY_DIR_PATH . '/vendor/autoload.php';
+require_once ZIPPY_PAY_DIR_PATH . '/includes/autoload.php';
+require_once ZIPPY_PAY_DIR_PATH . '/vendor/antom/global-open-sdk-php/init.php';
+
+// ini_set('display_errors', 1);
+// ini_set('display_startup_errors', 1);
+// error_reporting(E_ALL);
+
 
 ZIPPY_Pay_Core::global_style();
 

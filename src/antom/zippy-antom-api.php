@@ -12,7 +12,7 @@ use GuzzleHttp\Exception\RequestException;
 class ZIPPY_Antom_Api
 {
   private WC_Order $order;
-  private string $base_uri = "https://52a2-115-79-143-251.ngrok-free.app/";
+  private string $base_uri = "https://b3e6-115-79-143-251.ngrok-free.app";
   private string $errorMessage = 'We cannot process the payment at the moment. Please try again later.';
 
   public function __construct(int $order_id)
@@ -48,10 +48,10 @@ class ZIPPY_Antom_Api
 
   public function checkPaymentTransactionApi()
   {
-    $paymentId =  $this->order->get_order_key();
 
     $order_id = $this->order->get_id();
-    $path = "/v1/payment/antom/ecommerce/validate ";
+
+    $path = "v1/payment/antom/ecommerce/validate";
 
     $client = new Client([
       'base_uri' => $this->base_uri,
@@ -134,9 +134,11 @@ class ZIPPY_Antom_Api
 
   private function buildValidateTransactionPayload($order_id)
   {
+    $payment_requestID = get_post_meta($order_id, 'paymentRequestId');
+
     $data = array(
-      'OrderId' => 1746,
-      'PaymentRequestId' => 'ZIPPY#TQHNLM1TINZYKUPLOSFY#test',
+      'OrderId' => $order_id,
+      'PaymentRequestId' => $payment_requestID,
     );
     return $data;
   }

@@ -35,6 +35,10 @@ class ZIPPY_Antom_Payment
     $api = new ZIPPY_Antom_Api($order_id);
 
     $response = $api->createPaymentSessionApi();
+    //stored paymentRequestId
+    if (!empty($response['data']->paymentRequestId)) {
+      update_post_meta($order_id, 'paymentRequestId', $response['data']->paymentRequestId);
+    }
 
     return new WP_REST_Response(['data' => $response], 200);
   }
@@ -61,6 +65,7 @@ class ZIPPY_Antom_Payment
     $attempt = $args[1];
 
     $api = new ZIPPY_Antom_Api($order_id);
+
     $response = $api->checkPaymentTransactionApi();
 
     // Validate response format

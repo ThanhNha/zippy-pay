@@ -8,6 +8,7 @@ use ZIPPY_Pay\Core\ZIPPY_Pay_Core;
 
 use ZIPPY_Pay\Src\Antom\ZIPPY_Antom_Payment;
 
+
 class ZIPPY_Antom_Integration
 {
 
@@ -38,7 +39,7 @@ class ZIPPY_Antom_Integration
         if (!ZIPPY_Pay_Core::is_woocommerce_active()) {
             return;
         }
-        // add_filter('template_include', array($this, 'zippy_override_page_template'), 1, 3);
+
         add_filter('woocommerce_payment_gateways',  array($this, 'add_zippy_antom_to_woocommerce'));
 
         add_action('plugins_loaded',  array($this, 'zippy_antom_load_plugin_textdomain'));
@@ -46,13 +47,30 @@ class ZIPPY_Antom_Integration
         add_action('wp_enqueue_scripts', [$this, 'scripts_and_styles']);
 
         add_action('rest_api_init', array($this, 'zippy_antom_api'));
+
+
     }
 
     public function zippy_antom_api(): void
     {
         register_rest_route(ZIPPY_PAYMENT_API_NAMESPACE, '/antom/createPaymentSession', array(
             'methods' => 'POST',
-            'callback' => [ZIPPY_Antom_Payment::class, 'buildPaymentSession'],
+            'callback' => [ZIPPY_Antom_Payment::class, 'createPaymentSession'],
+            'args' => array(
+                'order_id' => array(
+                    'required' => true,
+                    'validate_callback' => function ($param, $request, $key) {
+                        return is_numeric($param);
+                    },
+                ),
+            ),
+            'permission_callback' => '__return_true',
+
+        ));
+
+        register_rest_route(ZIPPY_PAYMENT_API_NAMESPACE, '/antom/checkPaymentTransaction', array(
+            'methods' => 'POST',
+            'callback' => [ZIPPY_Antom_Payment::class, 'checkPaymentTransaction'],
             'args' => array(
                 'order_id' => array(
                     'required' => true,
@@ -97,7 +115,6 @@ class ZIPPY_Antom_Integration
             return;
         }
         $version = time();
-        // wp_enqueue_script('antom-sdk','https://sdk.marmot-cloud.com/package/ams-checkout/1.27.0/dist/umd/ams-checkout.min.js', [], '', true);
 
         wp_enqueue_script('antom-custom', ZIPPY_PAY_DIR_URL . 'includes/assets/dist/js/web.min.js', [], $version, ['strategy'  => 'async',]);
     }

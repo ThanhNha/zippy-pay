@@ -30,6 +30,7 @@
     "jquery": "^3.7.1"
   },
   "dependencies": {
-    "@alipay/ams-checkout": "^1.29.0"
+    "@alipay/ams-checkout": "^1.29.0",
+    "axios": "^1.7.7"
   }
 }

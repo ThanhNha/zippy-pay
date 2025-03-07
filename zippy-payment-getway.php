@@ -1,13 +1,14 @@
 <?php
 /* @wordpress-plugin
  * Plugin Name:       Zippy Pay
- * Plugin URI:
+ * Plugin URI:        https://zippy.sg/
  * Description:       Accept adyen payments on your WooCommerce shop
  * Version:           3.0.0
  * WC requires at least: 3.0
  * WC tested up to: 6.7
  * Author:            Zippy
  * Author URI:        https://zippy.sg/
+ * URI:               https://zippy.sg/
  * Text Domain:       zippy-and-woocommerce
  * Requires Plugins: woocommerce
  * license:           GPL-2.0+
@@ -25,7 +26,7 @@ use ZIPPY_Pay\Core\ZIPPY_Pay_Core;
 use ZIPPY_Pay\Src\Woocommerce\Zippy_Woo_Template;
 
 /* Set constant enpoint to the plugin directory. */
-if (!defined('ZIPPY_BOOKING_API_NAMESPACE')) {
+if (!defined('ZIPPY_PAYMENT_API_NAMESPACE')) {
   define('ZIPPY_PAYMENT_API_NAMESPACE', 'zippy-pay/v1');
 }
 define('ZIPPY_PAY_DIR_URL', plugin_dir_url(__FILE__));
@@ -42,12 +43,10 @@ define('PAYMENT_ANTOM_ID', 'zippy_antom_payment');
 
 require_once ZIPPY_PAY_DIR_PATH . '/vendor/autoload.php';
 require_once ZIPPY_PAY_DIR_PATH . '/includes/autoload.php';
-require_once ZIPPY_PAY_DIR_PATH . '/vendor/antom/global-open-sdk-php/init.php';
 
 // ini_set('display_errors', 1);
 // ini_set('display_startup_errors', 1);
 // error_reporting(E_ALL);
-
 
 ZIPPY_Pay_Core::global_style();
 

@@ -172,6 +172,7 @@ class ZIPPY_Adyen_Api
     try {
 
       $response = $this->client->post(
+        
         $path,
         [
           'headers' => $headers,

@@ -273,3 +273,44 @@
   min-height: 500px;
   height: calc(-88px + 100svh);
 }
+#zippy_antom_loader {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  z-index: 10;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 195mscubic-bezier(0.4, 0, 0.2, 1);
+  visibility: hidden;
+  opacity: 0;
+  &.show-loading {
+    opacity: 1;
+    visibility: visible;
+  }
+  &::before {
+    content: "";
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    opacity: 0.5;
+  }
+
+  .spinner {
+    border: 2px solid rgba(0, 0, 0, 0.1);
+    border-left-color: #000;
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+  }
+  @keyframes spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+}

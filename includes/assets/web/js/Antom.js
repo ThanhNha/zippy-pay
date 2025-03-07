@@ -1,4 +1,5 @@
 import { AMSCheckoutPage } from "@alipay/ams-checkout";
+import { webApi } from "./api";
 
 class Antom {
   constructor() {
@@ -11,17 +12,76 @@ class Antom {
       onError: ({ code, result }) => {
         console.log("Error:", code, result);
       },
-      onEventCallback: ({ code, message }) => {
-        console.log("Event:", code, message);
-      },
+      onEventCallback: this.onEventCallback,
     });
   }
 
-  async create(paymentSessionData) {
+  onEventCallback({ code, result }) {
+    switch (code) {
+      case "SDK_PAYMENT_SUCCESSFUL":
+        let currentUrl = new URL(window.location.href);
+
+        if (!currentUrl.searchParams.has("antom_process")) {
+          currentUrl.searchParams.set("antom_process", "checking");
+          window.location.href = currentUrl.toString();
+        }
+
+        break;
+      case "SDK_PAYMENT_PROCESSING":
+        console.log("Check the payment result data", result);
+        // Payment is being processed. Query the payment status through the server or wait for the payment result notification. At the same time, you can check whether the user has completed the payment. If the payment is not completed, guide the user to pay again.
+        break;
+      case "SDK_PAYMENT_FAIL":
+        console.log("Check the payment result data", result);
+        // Payment failed. Please refer to the processing suggestions in the Event codes and guide the user to pay again.
+        break;
+      case "SDK_PAYMENT_CANCEL":
+        // The user exits the payment page without submitting the order. You can re-invoke the SDK with paymentSessionData that is still valid. If it has expired, you need to re-request paymentSessionData.
+        break;
+      case "SDK_PAYMENT_ERROR":
+        console.log("Check the payment result data", result);
+        // The payment status is abnormal. Query the payment status through the server or wait for the payment result notification, or guide the user to pay again.
+        break;
+      case "SDK_END_OF_LOADING":
+        // End the custom loading animation.
+        break;
+      default:
+        break;
+    }
+  }
+
+  async getPaymentSessionData(orderId) {
+    try {
+      const response = await webApi.createPaymentSession({ order_id: orderId });
+
+      const data = await response.data;
+      return data;
+    } catch (error) {
+      console.error("Error fetching payment session data:", error);
+      return null;
+    }
+  }
+
+  async checkPaymentTransaction() {
+    try {
+      const response = await webApi.checkPaymentTransaction({
+        order_id: orderId,
+      });
+
+      const data = await response.data;
+      return data;
+    } catch (error) {
+      console.error("Error fetching payment session data:", error);
+      return null;
+    }
+  }
+
+  async create(orderId) {
+    const paymentSessionData = await this.getPaymentSessionData(orderId);
+    // console.log(paymentSessionData);
     await this.checkoutApp.mountComponent(
       {
-        sessionData:
-          "N8AlJDaZOyZovhcVOYiSo3C2AE3FkJbAqVsdMxOCJV1YjlL4zMgkiQwKmFsT/vXtaJbpggXLhKfww1r3nzJbOw==&&SG&&111&&eyJleHRlbmRJbmZvIjoie1wiT1BFTl9NVUxUSV9QQVlNRU5UX0FCSUxJVFlcIjpcInRydWVcIixcImRpc3BsYXlBbnRvbUxvZ29cIjpcImZhbHNlXCJ9IiwicGF5bWVudFNlc3Npb25Db25maWciOnsicGF5bWVudE1ldGhvZENhdGVnb3J5VHlwZSI6IkFMTCIsInByb2R1Y3RTY2VuZSI6IkNIRUNLT1VUX1BBWU1FTlQiLCJwcm9kdWN0U2NlbmVWZXJzaW9uIjoiMS4wIn0sInBheW1lbnRTZXNzaW9uRmFjdG9yIjp7ImV4dGVuZEluZm8iOnsibWVyY2hhbnRDYXBhYmlsaXRpZXMiOlsic3VwcG9ydHMzRFMiXSwic3VwcG9ydGVkTmV0d29ya3MiOlsiTUFTVEVSQ0FSRCIsIlZJU0EiXX0sImV4dGVybmFsUmlza1RpbWVvdXQiOjAsIm1lcmNoYW50SW5mbyI6eyJpbnN0TWlkIjoibWVyY2hhbnQuY29tLmFudG9tLmNoZWNrb3V0LnByb2QiLCJtZXJjaGFudE5hbWUiOiJNZXJjaGFudCIsInBhcnRuZXJJZCI6IjIxMTExMjAwMDE3MTY1RDYiLCJyZWdpc3RlcmVkQ291bnRyeSI6IlNHIn0sIm9yZGVyIjp7Im9yZGVyRGVzY3JpcHRpb24iOiJQVV8yODAyMjAyNV9RUi05MCJ9LCJwYXltZW50QW1vdW50Ijp7ImN1cnJlbmN5IjoiU0dEIiwiY3VycmVuY3lEaXZpZGVyIjoiICIsImN1cnJlbmN5TGFiZWwiOiIkIiwiY3VycmVuY3lTeW1ib2xQb3NpdGlvbiI6IkwiLCJmb3JtYXR0ZWRWYWx1ZSI6IjUuMjYiLCJ2YWx1ZSI6IjUuMjYifSwicGF5bWVudE1ldGhvZEluZm8iOnsicGF5bWVudE1ldGhvZFR5cGUiOiJBUFBMRVBBWSJ9fSwic2VjdXJpdHlDb25maWciOnsiYXBwSWQiOiIiLCJhcHBOYW1lIjoiT25lQWNjb3VudCIsImJpelRva2VuIjoiNlRjZGJyMnJGM3JQWXg0aGtWckhxYnZqIiwiZ2F0ZXdheSI6Imh0dHBzOi8vaW1ncy1zZWEuYWxpcGF5LmNvbS9tZ3cuaHRtIiwiaDVnYXRld2F5IjoiaHR0cHM6Ly9vcGVuLXNlYS1nbG9iYWwuYWxpcGF5LmNvbS9hcGkvb3Blbi9yaXNrX2NsaWVudCIsIndvcmtTcGFjZUlkIjoiIn0sInNraXBSZW5kZXJQYXltZW50TWV0aG9kIjpmYWxzZX0=",
+        sessionData: paymentSessionData?.data?.data?.paymentSessionData,
       },
       "#zippy_antom"
     );

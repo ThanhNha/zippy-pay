@@ -21,10 +21,11 @@ class Antom {
       case "SDK_PAYMENT_SUCCESSFUL":
         let currentUrl = new URL(window.location.href);
 
-        if (!currentUrl.searchParams.has("antom_process")) {
-          currentUrl.searchParams.set("antom_process", "checking");
-          window.location.href = currentUrl.toString();
-        }
+        if (currentUrl.searchParams.has("antom_process")) return;
+
+        currentUrl.searchParams.set("antom_process", "checking");
+
+        window.location.replace(currentUrl.toString());
 
         break;
       case "SDK_PAYMENT_PROCESSING":
@@ -33,6 +34,7 @@ class Antom {
         break;
       case "SDK_PAYMENT_FAIL":
         console.log("Check the payment result data", result);
+        this.error();
         // Payment failed. Please refer to the processing suggestions in the Event codes and guide the user to pay again.
         break;
       case "SDK_PAYMENT_CANCEL":
@@ -40,6 +42,7 @@ class Antom {
         break;
       case "SDK_PAYMENT_ERROR":
         console.log("Check the payment result data", result);
+        this.error();
         // The payment status is abnormal. Query the payment status through the server or wait for the payment result notification, or guide the user to pay again.
         break;
       case "SDK_END_OF_LOADING":
@@ -87,6 +90,11 @@ class Antom {
     );
   }
 
+  error() {
+    const $error = $("#antom_error");
+    $error.addClass("show-error");
+    return null;
+  }
   async remove() {
     this.checkoutApp.unmount();
   }

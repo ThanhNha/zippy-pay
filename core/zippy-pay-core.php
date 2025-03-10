@@ -204,4 +204,25 @@ class ZIPPY_Pay_Core
 
     wp_enqueue_style('zippy-css-checkout', ZIPPY_PAY_DIR_URL . 'includes/assets/dist/css/web.min.css', [], $version);
   }
+
+  public static function  pr($data)
+  {
+    echo '<style>
+  #debug_wrapper {
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    z-index: 999;
+    background: #fff;
+    color: #000;
+    overflow: auto;
+    width: 100%;
+    height: 100%;
+  }</style>';
+    echo '<div id="debug_wrapper"><pre>';
+
+    print_r($data); // or var_dump($data);
+    echo "</pre></div>";
+    die;
+  }
 }

@@ -6,6 +6,8 @@ use WC_Payment_Gateway;
 use WC_Order;
 use ZIPPY_Pay\Core\ZIPPY_Pay_Core;
 use ZIPPY_Pay\Src\Antom\ZIPPY_Antom_Api;
+use ZIPPY_Pay\Src\Logs\ZIPPY_Pay_Logger;
+
 
 defined('ABSPATH') || exit;
 
@@ -15,6 +17,8 @@ class ZIPPY_Antom_Gateway extends WC_Payment_Gateway
 	/**
 	 * ZIPPY_Antom_Gateway constructor.
 	 */
+	const PAYMENT_STATUS_SUCCESS = 'SUCCESS';
+
 	public function __construct()
 	{
 		$this->id           =  PAYMENT_ANTOM_ID;
@@ -94,10 +98,13 @@ class ZIPPY_Antom_Gateway extends WC_Payment_Gateway
 
 	private function handle_do_payment($order)
 	{
+		$order_id = $order->get_id();
 
-		// if ($is_active = $this->is_gateway_configured()) {
-		// 	return $this->handle_payment_failed();
-		// }
+		$transaction = get_post_meta($order_id, 'zippy_antom_transaction', true);
+
+		if (!empty($transaction) && isset($transaction->paymentStatus)) {
+			return $this->check_order_status($order_id);
+		}
 
 		// always redirect to Zippy
 		return $this->handle_payment_redirect($order);
@@ -136,7 +143,7 @@ class ZIPPY_Antom_Gateway extends WC_Payment_Gateway
 
 			$response =  $api->checkPaymentTransactionCallback($order_id);
 
-			if ($response['data']->data == 'SUCCESS') {
+			if ($response['data']->data == self::PAYMENT_STATUS_SUCCESS) {
 
 				return $this->check_order_status($order_id);
 			} else {
@@ -152,44 +159,30 @@ class ZIPPY_Antom_Gateway extends WC_Payment_Gateway
 	 */
 	public function handle_redirect()
 	{
-		// Check status order 
-		$order_id = intval($_REQUEST['order_id']);
+		$order_id = isset($_REQUEST['order_id']) ? intval($_REQUEST['order_id']) : 0;
 
-		var_dump($order_id);
-		// 	$merchant_id = get_option(PREFIX . '_merchant_id');
+		if (!$order_id) {
+			wp_die(__('Invalid Order ID', PREFIX . '_zippy_payment'), 400);
+		}
 
-		// 	$order = new WC_Order($order_id);
-
-		// 	$amount = $order->get_total();
-
-		// 	if (!isset($_REQUEST['order_id']) || empty($_REQUEST['order_id'])) {
-		// 		wp_redirect($order->get_checkout_payment_url());
-		// 		exit;
-		// 	}
-
-		// 	$api = new ZIPPY_Paynow_Api();
-
-		// 	$status = $api->checkStatusOrder($merchant_id, $order_id, $amount);
-
-		// 	return $this->check_order_status($status, $order);
+		$this->update_order_status($order_id);
 	}
+
+
+	/**
+	 * Update order status after payment confirmation
+	 */
 
 	private function check_order_status($order_id)
 	{
 
 		$order          = new WC_Order($order_id);
 
-		$status = $this->handle_get_transaction_status($order_id);
+		$status = $this->get_transaction_status($order_id);
 
-		if (isset($status) && $status == "SUCCESS") {
+		if ($status === self::PAYMENT_STATUS_SUCCESS) {
 
-			$order->add_order_note(sprintf(__('Payment was complete via ' . PAYMENT_ANTOM_NAME, PREFIX . '_zippy_payment')));
-
-			$order->payment_complete();
-
-			// should get payment details to log in the order.
-
-			wp_redirect($this->get_return_url($order));
+			return $this->payment_complete($order);
 		} else {
 			wp_safe_redirect($order->get_checkout_payment_url()); // Redirect to page pay-order to payment again.
 		}
@@ -205,22 +198,27 @@ class ZIPPY_Antom_Gateway extends WC_Payment_Gateway
 	 *
 	 * @return mixed
 	 */
-	private function handle_get_transaction_status($order_id)
+	private function get_transaction_status($order_id)
 	{
 
+		for ($i = 0; $i < 10; $i++) {
 
-		for ($i = 0; $i < 2; $i++) {
+			if ($i > 0) {
+				sleep(10);
+			}
 
-			if ($i > 0) sleep(5);
+			$transaction = get_post_meta($order_id, 'zippy_antom_transaction', true);
 
-			$transaction =	get_post_meta($order_id, 'zippy_antom_transaction');
+			ZIPPY_Pay_Logger::log_checkout("slepp function: $order_id", $transaction);
 
-			$status = $transaction[0]->transactionStatus;
+			ZIPPY_Pay_Logger::log_checkout("transaction log: $order_id", $transaction);
 
-			if (isset($status) && $status == "SUCCESS") break;
+			if (!empty($transaction) && isset($transaction->paymentStatus) && $transaction->paymentStatus === self::PAYMENT_STATUS_SUCCESS) {
+				return self::PAYMENT_STATUS_SUCCESS;
+			}
 		}
 
-		return $status;
+		return false;
 	}
 	/**
 	 * Handle do payment failed
@@ -236,10 +234,18 @@ class ZIPPY_Antom_Gateway extends WC_Payment_Gateway
 	}
 
 
-	// public function is_available()
-	// {
-	// 	return $this->is_gateway_configured();
-	// }
+	private function payment_complete($order)
+	{
+
+		$order->add_order_note(sprintf(__('Payment was complete via ' . PAYMENT_ANTOM_NAME, PREFIX . '_zippy_payment')));
+
+		$order->payment_complete();
+
+		// should get payment details to log in the order.
+
+		wp_redirect($this->get_return_url($order));
+	}
+
 
 	private function is_gateway_configured()
 	{

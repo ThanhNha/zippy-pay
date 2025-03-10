@@ -18,7 +18,7 @@ $(document).ready(function () {
   function initializeAntomCheckout() {
     const $checkoutContainer = $("#zippy_antom");
     const orderId = $("#antom_order_id").val()?.trim();
-    const $loadingIndicator = $("#zippy_antom_loader"); // Add a loading element
+    const $loadingIndicator = $("#zippy_antom_loader");
 
     if ($checkoutContainer.length === 0 || !orderId) {
       console.warn("Antom Checkout: Missing container or order ID.");
@@ -37,11 +37,13 @@ $(document).ready(function () {
         })
         .catch((error) => {
           console.error("Antom Checkout: Initialization failed.", error);
-          $loadingIndicator.removeClass("show-loading"); // Hide loading on failure
+          $loadingIndicator.removeClass("show-loading");
+          antomInstance.error();
         });
     } catch (error) {
       console.error("Antom Checkout: Unexpected error.", error);
       $loadingIndicator.removeClass("show-loading");
+      antomInstance.error();
     }
   }
 });

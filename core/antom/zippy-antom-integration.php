@@ -39,6 +39,7 @@ class ZIPPY_Antom_Integration
         if (!ZIPPY_Pay_Core::is_woocommerce_active()) {
             return;
         }
+        add_filter('template_include', array($this, 'zippy_override_page_template'), 1, 3);
 
         add_filter('woocommerce_payment_gateways',  array($this, 'add_zippy_antom_to_woocommerce'));
 
@@ -47,8 +48,6 @@ class ZIPPY_Antom_Integration
         add_action('wp_enqueue_scripts', [$this, 'scripts_and_styles']);
 
         add_action('rest_api_init', array($this, 'zippy_antom_api'));
-
-
     }
 
     public function zippy_antom_api(): void
@@ -86,13 +85,12 @@ class ZIPPY_Antom_Integration
 
     public function zippy_override_page_template($template)
     {
-        if (isset($_GET['amtom_payment']) && $_GET['amtom_payment'] === 'true') {
-            $template_directory = untrailingslashit(plugin_dir_path(__FILE__)) . "/templates/page-payment-antom.php";
+        $template_directory = untrailingslashit(plugin_dir_path(__FILE__)) . "/templates/page-antom-payment.php";
 
-            if (file_exists($template_directory)) {
-                return $template_directory;
-            }
+        if (file_exists($template_directory) && is_page("antom-payment")) {
+            return $template_directory;
         }
+
         return $template;
     }
 

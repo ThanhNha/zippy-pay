@@ -1,9 +1,14 @@
-<?php
+<!DOCTYPE html>
+<html lang="en">
 
-/** @var $order_id */
-?>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="/wp-content/plugins/zippy-pay/includes/assets/dist/css/web.min.css?ver=<?php echo time();?>">
+  <title>Document</title>
+</head>
 
-<?php if (isset($order_id) && !empty($order_id) && empty($_REQUEST['antom_process'])): ?>
+<body>
   <div id="zippy_antom_loader">
     <div class="spinner"></div>
   </div>
@@ -34,4 +39,7 @@
       </div>
     </div>
   </div>
-<?php endif; ?>
+<script src="/wp-content/plugins/zippy-pay/includes/assets/dist/js/web.min.js?ver=<?php echo time();?>"></script>
+</body>
+
+</html>

@@ -12,7 +12,7 @@ use GuzzleHttp\Exception\RequestException;
 class ZIPPY_Antom_Api
 {
   private WC_Order $order;
-  private string $base_uri = "https://b3e6-115-79-143-251.ngrok-free.app";
+  private string $base_uri = "https://rest.zippy.sg/";
   private string $errorMessage = 'We cannot process the payment at the moment. Please try again later.';
 
   public function __construct(int $order_id)
@@ -20,10 +20,10 @@ class ZIPPY_Antom_Api
     $this->order = new WC_Order($order_id);
   }
 
-
   public function createPaymentSessionApi()
   {
     $order_id = $this->order->get_id();
+
     $path = "/v1/payment/antom/ecommerce/session";
 
     $client = new Client([
@@ -33,7 +33,6 @@ class ZIPPY_Antom_Api
     ]);
 
     $data = $this->buildSessionPayload($order_id);
-
     try {
       $response = $client->post($path, ['json' => $data]);
       return $this->formatResponse(true, 'Get Payment Session Successfully', json_decode($response->getBody()));
@@ -51,7 +50,7 @@ class ZIPPY_Antom_Api
 
     $order_id = $this->order->get_id();
 
-    $path = "v1/payment/antom/ecommerce/validate";
+    $path = "/v1/payment/antom/ecommerce/validate";
 
     $client = new Client([
       'base_uri' => $this->base_uri,
@@ -76,49 +75,27 @@ class ZIPPY_Antom_Api
   public function checkPaymentTransactionCallback($order_id)
   {
 
+    $order_id = $this->order->get_id();
+
+    $path =  "/wp-json/zippy-pay/v1/antom/checkPaymentTransaction";
+
     $client = new Client([
-      'base_uri' => home_url(),
-      'headers' => [
-        'Content-Type' => 'application/json',
-      ],
-      'timeout'  => 15,
+      'base_uri' =>  home_url(),
+      'timeout'  => 30,
+      'headers'  => ['Content-Type' => 'application/json'],
     ]);
 
     try {
-      $response = $client->post(
-        "/wp-json/zippy-pay/v1/antom/checkPaymentTransaction",
-        ['query' => ['order_id' => $order_id]]
-      );
-
-      $statusCode = $response->getStatusCode();
-      if ($statusCode == 200) {
-        $responseData = json_decode($response->getBody());
-        $response = array(
-          'status' => true,
-          'message' => 'Trigger Background Job',
-          'data' => $responseData
-        );
-      } else {
-        $response = array(
-          'status' => $statusCode,
-          'message' => $this->errorMessage,
-        );
-      }
+      $response = $client->post($path,   ['query' => ['order_id' => $order_id]]);
+      return $this->formatResponse(true, 'Trigger Background Job', json_decode($response->getBody()));
     } catch (ConnectException $e) {
-      $response = array(
-        'status' => false,
-        'message' => 'Connection timed out. Please try again later.',
-      );
+      return $this->formatResponse(false, 'Connection timed out. Please try again later.');
     } catch (RequestException $e) {
-      $response = array(
-        'status' => $e->getResponse()->getStatusCode(),
-        'message' => $this->errorMessage,
-      );
+      $statusCode = $e->getResponse() ? $e->getResponse()->getStatusCode() : 500;
+      $errorMessage = $e->getResponse() ? (string) $e->getResponse()->getBody() : 'Unknown error occurred.';
+      return $this->formatResponse(false, "Request failed: $errorMessage", [], $statusCode);
     }
-
-    return $response;
   }
-
 
   private function buildSessionPayload($order_id)
   {
@@ -126,7 +103,10 @@ class ZIPPY_Antom_Api
       'OrderId' => $order_id,
       'CustomerId' => ZIPPY_Pay_Core::get_domain_name(),
       'OrderAmount' => $this->order->get_total(),
-      'RedirectUrl' => ZIPPY_Pay_Core::get_origin_domain(),
+      'RedirectUrl' => str_replace('https:', 'http:', add_query_arg(array(
+        'wc-api'      => 'zippy_antom_redirect',
+        'order_id'     => $order_id
+      ), home_url('/'))),
       'Currency' => "SGD"
     );
     return $data;
@@ -135,13 +115,13 @@ class ZIPPY_Antom_Api
   private function buildValidateTransactionPayload($order_id)
   {
     $payment_requestID = get_post_meta($order_id, 'paymentRequestId');
-
     $data = array(
       'OrderId' => $order_id,
-      'PaymentRequestId' => $payment_requestID,
+      'PaymentRequestId' => isset($payment_requestID[0]) ? $payment_requestID[0] : $payment_requestID,
     );
     return $data;
   }
+
   /**
    * Helper function to format API responses
    */

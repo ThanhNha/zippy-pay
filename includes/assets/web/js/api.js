@@ -6,4 +6,7 @@ export const webApi = {
   async checkPaymentTransaction(params) {
     return await makeRequest("/antom/checkPaymentTransaction", params, "POST");
   },
+  async pollPaymentTransaction(params) {
+    return await makeRequest("/", params, "POST",'',);
+  },
 };

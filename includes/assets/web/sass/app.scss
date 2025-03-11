@@ -321,6 +321,10 @@
   justify-content: center;
   flex-direction: column;
   margin-top: 15%;
+  position: absolute;
+  left: 50%;
+  top: 30%;
+  transform: translate(-50%, -50%);
   &.show-error {
     display: flex;
   }
@@ -333,12 +337,13 @@
       font-size: 16px;
       font-weight: bold;
       color: #666666;
+      text-align: center;
     }
   }
   .back_to_checkout {
     margin-top: 25px;
     outline: none;
-    background-color: #04AA6D;
+    background-color: #04aa6d;
     width: auto;
     min-width: 250px;
     padding: 8px 12px;
@@ -352,6 +357,56 @@
     a {
       color: #fff;
       font-size: 18px;
+      text-decoration: none;
+    }
+  }
+}
+
+#zippy_antom_notification {
+  display: none;
+  position: fixed;
+  top: calc(-88px + 100svh);
+  width: 100%;
+  height: auto;
+}
+body {
+  padding: 0;
+  margin: 0;
+}
+#antom_header_payment_page,
+#antom_footer_payment_page {
+  background-color: rgb(255, 255, 255);
+  position: fixed;
+  width: 100%;
+  z-index: 999;
+  padding: 25px 0px;
+  display: flex;
+  justify-content: center;
+}
+#antom_header_payment_page {
+  top: 0px;
+  box-shadow: rgba(3, 13, 32, 0.12) 0px 2px 4px 0px;
+  span {
+    font-size: 22px;
+    font-weight: bold;
+  }
+}
+#antom_footer_payment_page {
+  bottom: 0px;
+  box-shadow: rgba(3, 13, 32, 0.12) 0px -2px 4px 0px;
+  display: flex;
+  justify-items: center;
+  flex-direction: column;
+  span {
+    font-size: 14px;
+    text-align: center;
+    color: #7c89a3;
+  }
+  .bottom {
+    text-align: center;
+    a {
+      color: rgb(223, 46, 48);
+      text-decoration: underline;
     }
   }
 }

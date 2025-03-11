@@ -57,6 +57,17 @@ class ZIPPY_Antom_Payment
     return new WP_REST_Response(['data' => "SUCCESS"], 200);
   }
 
+  public static function pollPaymentTransaction($request)
+  {
+    $order_id = $request->get_param('order_id');
+
+
+    $transaction_status = get_post_meta($order_id, 'zippy_antom_transaction', true);
+
+
+    return new WP_REST_Response(['data' => $transaction_status], 200);
+  }
+
   public static function checkPaymentTransactionJob($args)
   {
     $order_id = $args[0];
@@ -66,8 +77,6 @@ class ZIPPY_Antom_Payment
     $api = new ZIPPY_Antom_Api($order_id);
 
     $response = $api->checkPaymentTransactionApi();
-
-    // var_dump($response['data']->paymentStatus);
 
     // Validate response format
     if (!isset($response['data'])) {

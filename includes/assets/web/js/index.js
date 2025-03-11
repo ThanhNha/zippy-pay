@@ -2,48 +2,49 @@ import Antom from "./Antom";
 ("use strict");
 
 $(document).ready(function () {
-  // Ensure the payment method is unchecked by default
   resetAntomSelection();
+  handlePageActions();
 
   function resetAntomSelection() {
     $("#payment_method_zippy_antom_payment").prop("checked", false);
   }
 
-  let currentUrl = new URL(window.location.href);
+  function handlePageActions() {
+    const currentUrl = new URL(window.location.href);
+    const currentPage = currentUrl.pathname;
 
-  if (!currentUrl.searchParams.has("antom_process")) {
-    initializeAntomCheckout();
+    const pageActions = {
+      "/antom-payment/pending/": pollPaymentStatus,
+      "/antom-payment/": initializeAntomCheckout,
+    };
+
+    if (pageActions[currentPage]) {
+      pageActions[currentPage]();
+    }
   }
 
   function initializeAntomCheckout() {
     const $checkoutContainer = $("#zippy_antom");
     const orderId = $("#antom_order_id").val()?.trim();
-    const $loadingIndicator = $("#zippy_antom_loader");
-
-    if ($checkoutContainer.length === 0 || !orderId) {
+    if (!$checkoutContainer.length || !orderId) {
       console.warn("Antom Checkout: Missing container or order ID.");
       return;
     }
 
-    // Show loading indicator before initializing
-    $loadingIndicator.addClass("show-loading");
+    const antomInstance = new Antom();
+    antomInstance.showLoading();
 
-    try {
-      const antomInstance = new Antom();
-      antomInstance
-        .create(orderId)
-        .then(() => {
-          $loadingIndicator.removeClass("show-loading"); // Hide loading after successful creation
-        })
-        .catch((error) => {
-          console.error("Antom Checkout: Initialization failed.", error);
-          $loadingIndicator.removeClass("show-loading");
-          antomInstance.error();
-        });
-    } catch (error) {
-      console.error("Antom Checkout: Unexpected error.", error);
-      $loadingIndicator.removeClass("show-loading");
-      antomInstance.error();
-    }
+    antomInstance
+      .create(orderId)
+      .then(() => antomInstance.hideLoading())
+      .catch(() => antomInstance.showError());
+  }
+
+  function pollPaymentStatus() {
+    const order_id = $("#antom_order_id_pending").val()?.trim();
+    if (!order_id) return;
+
+    const antomInstance = new Antom();
+    antomInstance.pollPaymentStatus();
   }
 });

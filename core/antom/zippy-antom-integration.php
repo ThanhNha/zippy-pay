@@ -86,9 +86,13 @@ class ZIPPY_Antom_Integration
     public function zippy_override_page_template($template)
     {
         $template_directory = untrailingslashit(plugin_dir_path(__FILE__)) . "/templates/page-antom-payment.php";
+        $template_directory_pending = untrailingslashit(plugin_dir_path(__FILE__)) . "/templates/page-antom-pending.php";
 
         if (file_exists($template_directory) && is_page("antom-payment")) {
             return $template_directory;
+        }
+        if (file_exists($template_directory_pending) && is_page("pending")) {
+            return $template_directory_pending;
         }
 
         return $template;

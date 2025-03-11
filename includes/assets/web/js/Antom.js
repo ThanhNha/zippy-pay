@@ -3,100 +3,144 @@ import { webApi } from "./api";
 
 class Antom {
   constructor() {
+    this.maxAttempts = 5;
+    this.retryDelay = 3000;
+    this.$loadingIndicator = $("#zippy_antom_loader");
+    this.$antom_error = $("#antom_error");
+
     this.checkoutApp = new AMSCheckoutPage({
       environment: "sandbox",
       locale: "en_US",
-      onLog: ({ code, message }) => {
-        console.log("Log:", code, message);
-      },
-      onError: ({ code, result }) => {
-        console.log("Error:", code, result);
-      },
-      onEventCallback: this.onEventCallback,
+      onLog: this.handleLog,
+      onError: this.handleError,
+      onEventCallback: this.onEventCallback.bind(this),
     });
   }
 
-  onEventCallback({ code, result }) {
-    switch (code) {
-      case "SDK_PAYMENT_SUCCESSFUL":
-        let currentUrl = new URL(window.location.href);
+  handleLog({ code, message }) {
+    console.log("Log:", code, message);
+  }
 
-        if (currentUrl.searchParams.has("antom_process")) return;
-
-        currentUrl.searchParams.set("antom_process", "checking");
-
-        window.location.replace(currentUrl.toString());
-
-        break;
-      case "SDK_PAYMENT_PROCESSING":
-        console.log("Check the payment result data", result);
-        // Payment is being processed. Query the payment status through the server or wait for the payment result notification. At the same time, you can check whether the user has completed the payment. If the payment is not completed, guide the user to pay again.
-        break;
-      case "SDK_PAYMENT_FAIL":
-        console.log("Check the payment result data", result);
-        this.error();
-        // Payment failed. Please refer to the processing suggestions in the Event codes and guide the user to pay again.
-        break;
-      case "SDK_PAYMENT_CANCEL":
-        // The user exits the payment page without submitting the order. You can re-invoke the SDK with paymentSessionData that is still valid. If it has expired, you need to re-request paymentSessionData.
-        break;
-      case "SDK_PAYMENT_ERROR":
-        console.log("Check the payment result data", result);
-        this.error();
-        // The payment status is abnormal. Query the payment status through the server or wait for the payment result notification, or guide the user to pay again.
-        break;
-      case "SDK_END_OF_LOADING":
-        // End the custom loading animation.
-        break;
-      default:
-        break;
-    }
+  handleError({ code, result }) {
+    console.error("SDK Error:", code, result);
   }
 
   async getPaymentSessionData(orderId) {
     try {
       const response = await webApi.createPaymentSession({ order_id: orderId });
-
-      const data = await response.data;
-      return data;
+      return response.data;
     } catch (error) {
       console.error("Error fetching payment session data:", error);
       return null;
     }
   }
 
-  async checkPaymentTransaction() {
+  async checkPaymentTransaction(orderId) {
     try {
       const response = await webApi.checkPaymentTransaction({
         order_id: orderId,
       });
-
-      const data = await response.data;
-      return data;
+      return response.data;
     } catch (error) {
-      console.error("Error fetching payment session data:", error);
+      console.error("Error fetching payment transaction data:", error);
       return null;
     }
   }
 
   async create(orderId) {
     const paymentSessionData = await this.getPaymentSessionData(orderId);
-    // console.log(paymentSessionData);
+    if (!paymentSessionData?.data?.data?.paymentSessionData) {
+      console.error("Payment session data missing.");
+      this.showError();
+      return;
+    }
+
     await this.checkoutApp.mountComponent(
-      {
-        sessionData: paymentSessionData?.data?.data?.paymentSessionData,
-      },
+      { sessionData: paymentSessionData.data.data.paymentSessionData },
       "#zippy_antom"
     );
   }
 
-  error() {
-    const $error = $("#antom_error");
-    $error.addClass("show-error");
-    return null;
+  showLoading() {
+    this.$loadingIndicator.addClass("show-loading");
   }
+
+  hideLoading() {
+    this.$loadingIndicator.removeClass("show-loading");
+  }
+
+  showError() {
+    console.error("🚨 Antom Checkout encountered an error.");
+    this.$antom_error.addClass("show-error");
+    this.hideLoading();
+  }
+
   async remove() {
     this.checkoutApp.unmount();
+  }
+
+  async pollPaymentStatus(orderId, attempt = 1) {
+    if (attempt > this.maxAttempts) {
+      console.warn("❌ Max retries reached, stopping payment checks.");
+      this.hideLoading();
+      this.showError();
+      return;
+    }
+
+    try {
+      const response = await webApi.pollPaymentTransaction({
+        "wc-api": "wc_zippy_antom_redirect",
+        order_id: orderId,
+      });
+      this.showLoading();
+      if (response?.data?.data?.paymentStatus === "SUCCESS") {
+        console.log("✅ Payment Successful!");
+        window.location.href = response?.data?.redirect_url; // Redirect to thank-you page
+        return;
+      }
+
+      setTimeout(
+        () => this.pollPaymentStatus(orderId, attempt + 1),
+        this.retryDelay
+      );
+    } catch (error) {
+      console.error(`⚠️ Error in attempt ${attempt}:`, error);
+      setTimeout(
+        () => this.pollPaymentStatus(orderId, attempt + 1),
+        this.retryDelay
+      );
+    }
+  }
+
+  onEventCallback({ code, result }) {
+    switch (code) {
+      case "SDK_PAYMENT_SUCCESSFUL":
+        this.handleSuccessfulPayment();
+        break;
+      case "SDK_PAYMENT_PROCESSING":
+        console.log("Payment Processing:", result);
+        break;
+      case "SDK_PAYMENT_FAIL":
+      case "SDK_PAYMENT_ERROR":
+        console.error("Payment Error:", result);
+        this.showError();
+        break;
+      case "SDK_PAYMENT_CANCEL":
+        console.warn("User canceled payment.");
+        break;
+      case "SDK_END_OF_LOADING":
+        console.log("SDK loading ended.");
+        break;
+      default:
+        console.warn("Unhandled SDK event:", code);
+        break;
+    }
+  }
+
+  handleSuccessfulPayment() {
+    let currentUrl = new URL(window.location.href);
+    let redirectPage = currentUrl.origin + "/antom-payment";
+    window.location.replace(redirectPage);
   }
 }
 

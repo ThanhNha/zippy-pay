@@ -7,7 +7,7 @@
   <link rel="stylesheet" href="/wp-content/plugins/zippy-pay/includes/assets/dist/css/web.min.css?ver=<?php echo time(); ?>">
   <link rel="stylesheet" href="<?php echo get_stylesheet_uri(); ?>">
 
-  <title>Epos Pay (Antom)</title>
+  <title>Pending</title>
 </head>
 
 <body>
@@ -45,27 +45,8 @@
   ?>
 
   <div>
-    <input id="antom_order_id" hidden type="text" value="<?php echo $order_id; ?>">
+    <input id="antom_order_id_pending" hidden type="text" value="1710">
   </div>
-
-  <div id="zippy_antom_notification">
-    <div class="notification_wrapper">
-      <div class="notification_text">
-        <span class="">Do not exit this screen till the payment is confirmed</span>
-      </div>
-      <div class="notification_text">
-        <span class="return"><a href="/checkout">Return</a></span>
-        <span class="" style="line-height: 1;">&nbsp;to change payment method</span>
-      </div>
-    </div>
-  </div>
-  <footer id="antom_footer_payment_page">
-    <span class="">Do not exit this screen till the payment is confirmed</span>
-    <div class="bottom">
-      <span><a href="/checkout">Return</a></span>
-      <span style="line-height: 1;">&nbsp;to change payment method</span>
-    </div>
-  </footer>
   <script src="/wp-content/plugins/zippy-pay/includes/assets/dist/js/web.min.js?ver=<?php echo time(); ?>"></script>
 </body>
 

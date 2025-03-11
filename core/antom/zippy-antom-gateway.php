@@ -137,19 +137,16 @@ class ZIPPY_Antom_Gateway extends WC_Payment_Gateway
 			'order_id' => 	$order_id,
 		], dirname(__FILE__), '/templates');
 
-		if (!empty($_REQUEST['antom_process']) &&  $_REQUEST['antom_process'] == 'checking') {
+		$api = new ZIPPY_Antom_Api($order_id);
 
-			$api = new ZIPPY_Antom_Api($order_id);
+		$response =  $api->checkPaymentTransactionCallback($order_id);
 
-			$response =  $api->checkPaymentTransactionCallback($order_id);
+		if ($response['data']->data == self::PAYMENT_STATUS_SUCCESS) {
 
-			if ($response['data']->data == self::PAYMENT_STATUS_SUCCESS) {
+			wp_safe_redirect(site_url('/antom-payment/?order_id=' . $order_id));
+		} else {
 
-				return $this->check_order_status($order_id);
-			} else {
-
-				wp_safe_redirect($order->get_checkout_payment_url());
-			}
+			wp_safe_redirect($order->get_checkout_payment_url());
 		}
 	}
 
@@ -161,11 +158,16 @@ class ZIPPY_Antom_Gateway extends WC_Payment_Gateway
 	{
 		$order_id = isset($_REQUEST['order_id']) ? intval($_REQUEST['order_id']) : 0;
 
-		if (!$order_id) {
-			wp_die(__('Invalid Order ID', PREFIX . '_zippy_payment'), 400);
-		}
+		$transaction_status = get_post_meta($order_id, 'zippy_antom_transaction', true);
 
-		$this->update_order_status($order_id);
+		$order = new WC_Order($order_id);
+
+		wp_send_json([
+			'status'  => 'success',
+			'message' => 'Redirecting to payment page',
+			'data' => $transaction_status,
+			'redirect_url' => $this->get_return_url($order)
+		]);
 	}
 
 
@@ -201,10 +203,10 @@ class ZIPPY_Antom_Gateway extends WC_Payment_Gateway
 	private function get_transaction_status($order_id)
 	{
 
-		for ($i = 0; $i < 10; $i++) {
+		for ($i = 0; $i < 3; $i++) {
 
 			if ($i > 0) {
-				sleep(10);
+				sleep(5);
 			}
 
 			$transaction = get_post_meta($order_id, 'zippy_antom_transaction', true);

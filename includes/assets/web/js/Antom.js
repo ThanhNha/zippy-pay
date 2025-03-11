@@ -80,25 +80,24 @@ class Antom {
   }
 
   async pollPaymentStatus(orderId, attempt = 1) {
-    if (attempt > this.maxAttempts) {
-      console.warn("❌ Max retries reached, stopping payment checks.");
-      this.hideLoading();
-      this.showError();
-      return;
-    }
-
     try {
       const response = await webApi.pollPaymentTransaction({
         "wc-api": "wc_zippy_antom_redirect",
         order_id: orderId,
       });
-      this.showLoading();
-      if (response?.data?.data?.paymentStatus === "SUCCESS") {
-        console.log("✅ Payment Successful!");
-        window.location.href = response?.data?.redirect_url; // Redirect to thank-you page
+      if (attempt > this.maxAttempts) {
+        console.warn("❌ Max retries reached, stopping payment checks.");
+        this.hideLoading();
+        this.showError();
+        window.location.href = response?.data?.redirect_url;
         return;
       }
-
+      // this.showLoading();
+      if (response?.data?.data?.paymentStatus === "SUCCESS") {
+        console.log("✅ Payment Successful!");
+        window.location.href = response?.data?.redirect_url;
+        return;
+      }
       setTimeout(
         () => this.pollPaymentStatus(orderId, attempt + 1),
         this.retryDelay
@@ -119,10 +118,12 @@ class Antom {
         break;
       case "SDK_PAYMENT_PROCESSING":
         console.log("Payment Processing:", result);
+        this.handleSuccessfulPayment();
         break;
       case "SDK_PAYMENT_FAIL":
       case "SDK_PAYMENT_ERROR":
         console.error("Payment Error:", result);
+        this.remove();
         this.showError();
         break;
       case "SDK_PAYMENT_CANCEL":
@@ -130,6 +131,7 @@ class Antom {
         break;
       case "SDK_END_OF_LOADING":
         console.log("SDK loading ended.");
+        this.handleSuccessfulPayment();
         break;
       default:
         console.warn("Unhandled SDK event:", code);
@@ -139,8 +141,8 @@ class Antom {
 
   handleSuccessfulPayment() {
     let currentUrl = new URL(window.location.href);
-    let redirectPage = currentUrl.origin + "/antom-payment";
-    window.location.replace(redirectPage);
+    let redirectPage = currentUrl.origin + "/antom-payment/pending";
+    window.location.href(redirectPage);
   }
 }
 

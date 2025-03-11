@@ -33,7 +33,6 @@ $(document).ready(function () {
 
     const antomInstance = new Antom();
     antomInstance.showLoading();
-
     antomInstance
       .create(orderId)
       .then(() => antomInstance.hideLoading())
@@ -45,6 +44,7 @@ $(document).ready(function () {
     if (!order_id) return;
 
     const antomInstance = new Antom();
-    antomInstance.pollPaymentStatus();
+    antomInstance.showLoading();
+    antomInstance.pollPaymentStatus(order_id);
   }
 });

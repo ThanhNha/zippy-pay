@@ -12,7 +12,7 @@ use GuzzleHttp\Exception\RequestException;
 class ZIPPY_Antom_Api
 {
   private WC_Order $order;
-  private string $base_uri = "https://rest.zippy.sg/";
+  private string $base_uri = "https://rest.zippy.sg";
   private string $errorMessage = 'We cannot process the payment at the moment. Please try again later.';
 
   public function __construct(int $order_id)

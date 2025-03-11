@@ -24,6 +24,8 @@ use ZIPPY_Pay\Core\Antom\ZIPPY_Antom_Integration;
 use ZIPPY_Pay\Settings\Zippy_Pay_Ajax_Handle;
 use ZIPPY_Pay\Core\ZIPPY_Pay_Core;
 use ZIPPY_Pay\Src\Woocommerce\Zippy_Woo_Template;
+use ZIPPY_Pay\Src\Antom\ZIPPY_Antom_Scheduler;
+
 
 /* Set constant enpoint to the plugin directory. */
 if (!defined('ZIPPY_PAYMENT_API_NAMESPACE')) {
@@ -44,6 +46,16 @@ define('PAYMENT_ANTOM_ID', 'zippy_antom_payment');
 require_once ZIPPY_PAY_DIR_PATH . '/vendor/autoload.php';
 require_once ZIPPY_PAY_DIR_PATH . '/includes/autoload.php';
 
+add_action('zippy_check_antom_payment_task', [ZIPPY_Antom_Scheduler::class, 'process_order'], 10, 1);
+
+add_filter('cron_schedules', function ($schedules) {
+  $schedules['zippy_antom_every_minute'] = [
+      'interval' => 15, // 60 seconds (1 minute)
+      'display'  => __('Every Minute'),
+  ];
+  return $schedules;
+});
+
 // ini_set('display_errors', 1);
 // ini_set('display_startup_errors', 1);
 // error_reporting(E_ALL);
@@ -59,3 +71,5 @@ ZIPPY_Paynow_Integration::get_instance();
 ZIPPY_Antom_Integration::get_instance();
 
 Zippy_Pay_Ajax_Handle::get_instance();
+
+

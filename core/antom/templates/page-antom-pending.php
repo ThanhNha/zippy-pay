@@ -15,6 +15,7 @@
       width: 100%;
       min-height: 500px;
       height: calc(-160px + 100svh);
+      margin-top: 80px;
     }
 
     #zippy_antom_loader {

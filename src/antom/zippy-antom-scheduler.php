@@ -8,7 +8,7 @@ class ZIPPY_Antom_Scheduler
 {
 
   const HOOK_NAME = 'zippy_check_antom_payment_task';
-  const MAX_RETRIES = 60 ;
+  const MAX_RETRIES = 60;
   const RETRY_INTERVAL = 10; // Retry every 10 seconds
 
   /**
@@ -44,6 +44,10 @@ class ZIPPY_Antom_Scheduler
     if (isset($response) && $response['data']->paymentStatus === 'SUCCESS') {
 
       update_post_meta($order_id, 'zippy_antom_transaction', $response['data']);
+
+      $order = wc_get_order($order_id);
+      $order->add_order_note(sprintf(__('Payment completed via ' . PAYMENT_ANTOM_NAME, PREFIX . '_zippy_payment')));
+      $order->payment_complete();
 
       // Stop further scheduling since payment is complete
       wp_clear_scheduled_hook(self::HOOK_NAME, [$order_id]); // Stop cron

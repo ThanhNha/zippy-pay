@@ -272,6 +272,7 @@
   width: 100%;
   min-height: 500px;
   height: calc(-160px + 100svh);
+  margin-top: 80px;
 }
 #zippy_antom_loader {
   position: absolute;
@@ -397,7 +398,7 @@ body {
   display: flex;
   justify-items: center;
   flex-direction: column;
-  &.pending-page{
+  &.pending-page {
     span {
       font-size: 16px;
       color: #555555;

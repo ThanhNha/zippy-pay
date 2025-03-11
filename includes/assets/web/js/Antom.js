@@ -142,7 +142,7 @@ class Antom {
   handleSuccessfulPayment() {
     let currentUrl = new URL(window.location.href);
     let redirectPage = currentUrl.origin + "/antom-payment/pending";
-    window.location.href(redirectPage);
+    window.location.replace(redirectPage);
   }
 }
 

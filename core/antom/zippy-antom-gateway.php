@@ -121,8 +121,6 @@ class ZIPPY_Antom_Gateway extends WC_Payment_Gateway
 			]);
 		}
 
-		$this->check_order_status($order_id);
-
 		wp_send_json([
 			'status'  => 'success',
 			'message' => 'Redirecting to payment page',
@@ -140,7 +138,8 @@ class ZIPPY_Antom_Gateway extends WC_Payment_Gateway
 
 		if ($status === self::PAYMENT_STATUS_SUCCESS) {
 			$this->payment_complete($order);
-			return $this->get_return_url($order);
+			wp_safe_redirect($this->get_return_url($order));
+			exit;
 		}
 
 		wp_safe_redirect($order->get_checkout_payment_url());

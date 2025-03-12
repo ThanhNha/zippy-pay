@@ -114,13 +114,18 @@ class ZIPPY_Pay_Core
 
   public static function get_domain_name()
   {
-    $original_url = "https://" . $_SERVER['SERVER_NAME'];
-    $pieces = parse_url($original_url);
-    $domain = isset($pieces['host']) ? $pieces['host'] : '';
-    if (preg_match('/(?P<domain>[a-z0-9][a-z0-9\-]{1,63}\.[a-z\.]{2,6})$/i', $domain,    $regs)) {
-      $domain = strstr($regs['domain'], '.', true);
+    $host = $_SERVER['SERVER_NAME'];
+    $parts = explode('.', $host);
+    $count = count($parts);
+
+    if ($count > 2) {
+
+      array_pop($parts);
+      array_pop($parts);
+      return implode('.', $parts);
     }
-    return $domain;
+
+    return $parts[0];
   }
 
   /**

@@ -25,11 +25,15 @@ class ZIPPY_Antom_Api
     $order_id = $this->order->get_id();
 
     $path = "/v1/payment/antom/ecommerce/session";
+    $headers = array(
+      'Content-Type' => 'application/json',
+      'domain' => ZIPPY_Pay_Core::get_domain_name()
+    );
 
     $client = new Client([
       'base_uri' => $this->base_uri,
       'timeout'  => 30,
-      'headers'  => ['Content-Type' => 'application/json'],
+      'headers'  => $headers,
     ]);
 
     $data = $this->buildSessionPayload($order_id);
@@ -52,10 +56,14 @@ class ZIPPY_Antom_Api
 
     $path = "/v1/payment/antom/ecommerce/validate";
 
+    $headers = array(
+      'Content-Type' => 'application/json',
+      'domain' => ZIPPY_Pay_Core::get_domain_name()
+    );
     $client = new Client([
       'base_uri' => $this->base_uri,
       'timeout'  => 30,
-      'headers'  => ['Content-Type' => 'application/json'],
+      'headers'  => $headers,
     ]);
 
     $data = $this->buildValidateTransactionPayload($order_id);

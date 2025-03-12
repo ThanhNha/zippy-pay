@@ -33,7 +33,7 @@ class ZIPPY_Antom_Scheduler
 
     if ($attempts >= self::MAX_RETRIES) {
       wp_clear_scheduled_hook(self::HOOK_NAME, [$order_id]);
-      ZIPPY_Pay_Logger::log_checkout("Retrying payment check for order_id: $order_id. Attempt $attempts in 15 seconds", $order_id);
+      ZIPPY_Pay_Logger::log_checkout("Job max retries: $attempts time", $order_id);
     }
 
     $api = new ZIPPY_Antom_Api($order_id);
@@ -50,9 +50,10 @@ class ZIPPY_Antom_Scheduler
       $order->payment_complete();
 
       // Stop further scheduling since payment is complete
+      ZIPPY_Pay_Logger::log_checkout("Payment SUCCESS for order_id: $order_id. Stopping background job.", $order_id);
+
       wp_clear_scheduled_hook(self::HOOK_NAME, [$order_id]); // Stop cron
 
-      ZIPPY_Pay_Logger::log_checkout("Payment SUCCESS for order_id: $order_id. Stopping background job.", $order_id);
     } else {
 
       $attempts++;

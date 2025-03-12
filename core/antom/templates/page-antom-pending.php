@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="<?php echo get_stylesheet_uri(); ?>">
 
-  <title>Pending</title>
+  <title>Payment | <?php echo get_bloginfo(); ?></title>
 </head>
 
 <body>
@@ -180,7 +180,7 @@
     }
   </style>
   <header id="antom_header_payment_page">
-    <span>Epos Pay</span>
+    <span>Payment | <?php echo get_bloginfo(); ?></span>
   </header>
   <div id="zippy_antom_loader">
     <div class="spinner"></div>

@@ -198,7 +198,15 @@
   </div>
   <div id="zippy_antom"></div>
   <?php
-  if (function_exists('WC')) {
+  // Make sure WooCommerce is initialized
+  if (!is_admin() && WC()->session && !WC()->session->has_session()) {
+    WC()->session->set_customer_session_cookie(true);
+  }
+
+  // Retrieve the stored order ID
+  $order_id = WC()->session->get('antom_order_id');
+
+  if (function_exists('WC') && empty($order_id)) {
     $customer_orders = wc_get_orders([
       'limit'   => 1,
       'orderby' => 'date',

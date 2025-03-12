@@ -87,6 +87,15 @@ class ZIPPY_Antom_Gateway extends WC_Payment_Gateway
 			'order_id' => $order_id,
 		], dirname(__FILE__), '/templates');
 
+		// Ensure WooCommerce session is started
+
+		if (!is_admin() && WC()->session && !WC()->session->has_session()) {
+			WC()->session->set_customer_session_cookie(true);
+		}
+
+		// Store order ID in session
+		WC()->session->set('antom_order_id', $order_id);
+
 		$scheduler = new ZIPPY_Antom_Scheduler();
 		$scheduler->schedule_order_processing($order_id);
 

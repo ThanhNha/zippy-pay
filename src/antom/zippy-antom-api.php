@@ -23,11 +23,13 @@ class ZIPPY_Antom_Api
   public function createPaymentSessionApi()
   {
     $order_id = $this->order->get_id();
+    $merchant_id = get_option(PREFIX . '_merchant_id');
 
     $path = "/v1/payment/antom/ecommerce/session";
     $headers = array(
       'Content-Type' => 'application/json',
-      'domain' => ZIPPY_Pay_Core::get_domain_name()
+      'domain' => ZIPPY_Pay_Core::get_domain_name(),
+      'organization' => $merchant_id
     );
 
     $client = new Client([
@@ -53,12 +55,14 @@ class ZIPPY_Antom_Api
   {
 
     $order_id = $this->order->get_id();
+    $merchant_id = get_option(PREFIX . '_merchant_id');
 
     $path = "/v1/payment/antom/ecommerce/validate";
 
     $headers = array(
       'Content-Type' => 'application/json',
-      'domain' => ZIPPY_Pay_Core::get_domain_name()
+      'domain' => ZIPPY_Pay_Core::get_domain_name(),
+      'organization' => $merchant_id
     );
     $client = new Client([
       'base_uri' => $this->base_uri,

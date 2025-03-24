@@ -114,9 +114,8 @@ class Antom {
   onEventCallback({ code, result }) {
     switch (code) {
       case "SDK_PAYMENT_SUCCESSFUL":
-        this.handleSuccessfulPayment();
-        break;
       case "SDK_PAYMENT_PROCESSING":
+      case "SDK_PAYMENT_CANCEL":
         console.log("Payment Processing:", result);
         this.handleSuccessfulPayment();
         break;
@@ -125,9 +124,6 @@ class Antom {
         console.error("Payment Error:", result);
         this.remove();
         this.showError();
-        break;
-      case "SDK_PAYMENT_CANCEL":
-        console.warn("User canceled payment.");
         break;
       case "SDK_END_OF_LOADING":
         console.log("SDK loading ended.");
@@ -138,6 +134,7 @@ class Antom {
         break;
     }
   }
+  
 
   handleSuccessfulPayment() {
     let currentUrl = new URL(window.location.href);
@@ -147,3 +144,5 @@ class Antom {
 }
 
 export default Antom;
+
+

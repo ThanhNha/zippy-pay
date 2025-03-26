@@ -37,6 +37,8 @@ class Zippy_Pay_Ajax_Handle
     add_action('zippy_is_active_paynow', array($this, 'zippy_active_paynow_callback'));
 
     add_action('zippy_is_active_adyen', array($this, 'zippy_active_adyen_callback'));
+
+    add_action('zippy_is_active_antom', array($this, 'zippy_active_antom_callback'));
   }
 
   function sync_config_payment_callback()
@@ -51,13 +53,19 @@ class Zippy_Pay_Ajax_Handle
 
     $adyen_config = $response['data']->result->adyenConfig;
 
+    $antom_config = $response['data']->result->antomPaymentConfig;
+
     $is_paynow_store_success = update_option('zippy_configs_paynow', $paynow_config);
 
     $is_adyen_store_success = update_option('zippy_configs_adyen', $adyen_config);
 
+    $is_antom_store_success = update_option('zippy_configs_antom', $antom_config);
+
     do_action('zippy_is_active_paynow', $paynow_config);
 
     do_action('zippy_is_active_adyen', $adyen_config);
+
+    do_action('zippy_is_active_antom', $antom_config);
 
     unset($response['data']);
     // Send the JSON response
@@ -87,6 +95,18 @@ class Zippy_Pay_Ajax_Handle
 
     //Store config
     return update_option('woocommerce_zippy_adyen_payment_settings', apply_filters('woocommerce_settings_api_sanitized_fields_' . PAYMENT_ADYEN_ID, $is_active_adyen), 'yes');
+  }
+
+  public function zippy_active_antom_callback($antom_config)
+  {
+    if (empty($antom_config)) return;
+
+    $is_active_antom = array(
+      'enabled' => $this->convert_bool_enabled($antom_config->isEnabled)
+    );
+
+    //Store config
+    return update_option('woocommerce_zippy_antom_payment_settings', apply_filters('woocommerce_settings_api_sanitized_fields_' . PAYMENT_ANTOM_ID, $is_active_antom), 'yes');
   }
 
   public function convert_bool_enabled($bool)

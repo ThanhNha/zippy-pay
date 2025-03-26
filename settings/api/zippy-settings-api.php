@@ -57,7 +57,6 @@ class ZIPPY_Settings_Api
         'message' => 'Store config is failed',
       );
     }
-
     return $response;
   }
 }

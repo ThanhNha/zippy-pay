@@ -9,7 +9,7 @@ class Antom {
     this.$antom_error = $("#antom_error");
 
     this.checkoutApp = new AMSCheckoutPage({
-      environment: "sandbox",
+      environment: "prod",
       locale: "en_US",
       onLog: this.handleLog,
       onError: this.handleError,

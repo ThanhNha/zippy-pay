@@ -13,6 +13,10 @@ defined('ABSPATH') || exit;
 class ZIPPY_Pay_Settings extends WC_Settings_Page
 {
 
+  private $id_paynow_tab;
+  private $id_adyen_tab;
+  private $id_antom_tab;
+
   /**
    * Constructor
    */
@@ -23,6 +27,7 @@ class ZIPPY_Pay_Settings extends WC_Settings_Page
     $this->label = __('Zippy Payment',  PREFIX . 'zippy-settings-tab');
     $this->id_paynow_tab = 'woocommerce_' . PAYMENT_PAYNOW_ID . '_settings';
     $this->id_adyen_tab  = 'woocommerce_' .  PAYMENT_ADYEN_ID . '_settings';
+    $this->id_antom_tab  = 'woocommerce_' .  PAYMENT_ANTOM_ID . '_settings';
     add_filter('woocommerce_settings_tabs_array', array($this, 'add_settings_tab'), 50);
     add_action('admin_enqueue_scripts', array($this, 'admin_scripts_and_styles'));
     add_action('woocommerce_sections_' . $this->id, array($this, 'output_sections'));
@@ -59,13 +64,20 @@ class ZIPPY_Pay_Settings extends WC_Settings_Page
 
     $has_adyen_tab =  $this->get_payment_status($this->id_adyen_tab, true);
 
+    $has_antom_tab =  $this->get_payment_status($this->id_antom_tab, true);
+
     if (isset($has_adyen_tab) && $has_adyen_tab == 'yes') {
       $sections['zippy_credit_card'] = __('EPOSPay Credit Card', PREFIX . 'zippy-settings-tab');
+    }
+
+    if (isset($has_antom_tab) && $has_antom_tab == "yes") {
+      $sections['zippy_antom'] = __('EPOSPay Antom', PREFIX . 'zippy-settings-tab');
     }
 
     if (isset($has_paynow_tab) && $has_paynow_tab == "yes") {
       $sections['zippy_paynow'] = __('EPOSPay Paynow', PREFIX . 'zippy-settings-tab');
     }
+
 
     return apply_filters('woocommerce_get_sections_' . $this->id, $sections);
   }
@@ -98,6 +110,33 @@ class ZIPPY_Pay_Settings extends WC_Settings_Page
             'title'   => __('Payment methods', PREFIX . 'zippy-settings-tab'),
             'type'      => 'zippy_credit_card_field',
           ),
+          'divider' => ZIPPY_Pay_Core::divider(),
+          'section_end' => array(
+            'type' => 'sectionend',
+            'id' => 'zippy_settings_tab_end_credit_card'
+          )
+        );
+
+        break;
+
+      case 'zippy_antom_payment':
+
+        $settings = array(
+          'section_title' => $this->show_warning_message(),
+          'divider' => ZIPPY_Pay_Core::divider(),
+          'enable_credit_card'         => array(
+            'title'   => __('Enable EPOSPay Antom', PREFIX . 'zippy-settings-tab'),
+            'type'    => 'checkbox',
+            'label'   => __('Enable EPOSPay Antom', PREFIX . 'zippy-settings-tab'),
+            'default' => 'no',
+            'id'      =>   $this->id_antom_tab,
+            'value'   => $this->get_payment_status($this->id_antom_tab)
+          ),
+          // 'zippy_credit_card_field'         => array(
+          //   'id'       => 'zippy_credit_card_field',
+          //   'title'   => __('Payment methods', PREFIX . 'zippy-settings-tab'),
+          //   'type'      => 'zippy_credit_card_field',
+          // ),
           'divider' => ZIPPY_Pay_Core::divider(),
           'section_end' => array(
             'type' => 'sectionend',

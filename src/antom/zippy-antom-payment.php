@@ -5,6 +5,7 @@ namespace ZIPPY_Pay\Src\Antom;
 use ZIPPY_Pay\Src\Antom\ZIPPY_Antom_Api;
 use ZIPPY_Pay\Src\Logs\ZIPPY_Pay_Logger;
 use WP_REST_Response;
+use WP_Error;
 
 defined('ABSPATH') || exit;
 
@@ -27,6 +28,10 @@ class ZIPPY_Antom_Payment
     $api = new ZIPPY_Antom_Api($order_id);
 
     $response = $api->createPaymentSessionApi();
+
+    if (!($response['status'])) {
+      return new WP_Error('invalid_order_id', 'Invalid Order', array('status' => 400));
+    }
 
     //stored paymentRequestId
     if (!empty($response['data']->paymentRequestId)) {

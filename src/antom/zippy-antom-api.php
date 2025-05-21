@@ -2,7 +2,7 @@
 
 namespace ZIPPY_Pay\Src\Antom;
 
-use WC_Order;
+use WC_Order_Factory;
 use ZIPPY_Pay\Core\ZIPPY_Pay_Core;
 
 use GuzzleHttp\Client;
@@ -11,18 +11,29 @@ use GuzzleHttp\Exception\RequestException;
 
 class ZIPPY_Antom_Api
 {
-  private WC_Order $order;
+  private $order;
   private string $base_uri = "https://rest.zippy.sg";
   private string $errorMessage = 'We cannot process the payment at the moment. Please try again later.';
 
   public function __construct(int $order_id)
   {
-    $this->order = new WC_Order($order_id);
+
+
+    if ($this->is_valid_woocommerce_order($order_id)) {
+      $this->order = wc_get_order($order_id);
+    } else {
+      error_log("Invalid order ID: $order_id");
+    }
   }
 
   public function createPaymentSessionApi()
   {
+    if (!$this->order) {
+      return $this->formatResponse(false, 'Invalid order. Cannot create payment session.');
+    }
+
     $order_id = $this->order->get_id();
+
     $merchant_id = get_option(PREFIX . '_merchant_id');
 
     $path = "/v1/payment/antom/ecommerce/session";
@@ -87,6 +98,7 @@ class ZIPPY_Antom_Api
   public function checkPaymentTransactionCallback($order_id)
   {
 
+
     $order_id = $this->order->get_id();
 
     $path =  "/wp-json/zippy-pay/v1/antom/checkPaymentTransaction";
@@ -145,5 +157,14 @@ class ZIPPY_Antom_Api
       'data' => $data,
       'code' => $statusCode
     ];
+  }
+
+  private function is_valid_woocommerce_order($order_id)
+  {
+    require_once ZIPPY_PAY_DIR_PATH . '../woocommerce/includes/wc-order-functions.php';
+
+    $order = wc_get_order($order_id);
+
+    return $order && $order->get_type() === 'shop_order';
   }
 }

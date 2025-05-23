@@ -37,6 +37,7 @@ class ZIPPY_Fields_Setting
     add_action('woocommerce_admin_field_zippy_credit_card_field', array($this, 'zippy_credit_card_settings'));
     add_action('woocommerce_admin_field_zippy_paynow_field', array($this, 'zippy_paynow_settings'));
     add_action('woocommerce_admin_field_zippy_general_field', array($this, 'zippy_general_settings'));
+    add_action('woocommerce_admin_field_zippy_antom_field', array($this, 'zippy_antom_settings'));
     // add_action("wp_ajax_sync_config_payment_callback", array($this, "sync_config_payment_callback"));
     // add_action("wp_ajax_nopriv_sync_config_payment_callback", array($this, "sync_config_payment_callback"));
   }
@@ -106,6 +107,21 @@ class ZIPPY_Fields_Setting
     $config_infor = get_option('zippy_configs_paynow');
 
     echo ZIPPY_Pay_Core::get_template('paynow/setting-fields.php', [
+      'params' => $config_infor,
+    ], dirname(__FILE__), '/templates');
+  }
+
+  /**
+   * Add Additional Settings Of Zippy Paynow
+   *
+   *
+   */
+  function zippy_antom_settings($current_section = '')
+  {
+
+    $config_infor = get_option('zippy_configs_antom');
+
+    echo ZIPPY_Pay_Core::get_template('antom/setting-fields.php', [
       'params' => $config_infor,
     ], dirname(__FILE__), '/templates');
   }

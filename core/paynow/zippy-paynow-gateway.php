@@ -175,7 +175,8 @@ class ZIPPY_Paynow_Gateway extends WC_Payment_Gateway
 		echo ZIPPY_Pay_Core::get_template('whatsapp-handle.php', [
 			'user_contact' => $user_contact,
 			'domain' => $domain,
-			'type' => $type
+			'type' => $type,
+			'order_id' => $order_id
 
 		], dirname(__FILE__), '/templates');
 	}

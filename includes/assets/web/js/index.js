@@ -2,30 +2,49 @@ import Antom from "./Antom";
 ("use strict");
 
 $(document).ready(function () {
-  // handleChooseAntom();
+  resetAntomSelection();
+  handlePageActions();
 
-  function handleChooseAntom() {
-    var payment_methods = $('#payment input[type="radio"]');
-    var antom = $("#payment_method_zippy_antom_payment");
-    const antomInstance = new Antom();
+  function resetAntomSelection() {
+    $("#payment_method_zippy_antom_payment").prop("checked", false);
+  }
 
-    if (payment_methods.length === 1) {
-      antomInstance.create();
+  function handlePageActions() {
+    const currentUrl = new URL(window.location.href);
+    const currentPage = currentUrl.pathname;
+
+    const pageActions = {
+      "/antom-payment/pending/": pollPaymentStatus,
+      "/antom-payment/": initializeAntomCheckout,
+    };
+
+    if (pageActions[currentPage]) {
+      pageActions[currentPage]();
+    }
+  }
+
+  function initializeAntomCheckout() {
+    const $checkoutContainer = $("#zippy_antom");
+    const orderId = $("#antom_order_id").val()?.trim();
+    if (!$checkoutContainer.length || !orderId) {
+      console.warn("Antom Checkout: Missing container or order ID.");
       return;
     }
 
-    antom.prop("checked", false);
+    const antomInstance = new Antom();
+    antomInstance.showLoading();
+    antomInstance
+      .create(orderId)
+      .then(() => antomInstance.hideLoading())
+      .catch(() => antomInstance.showError());
+  }
 
-    $("#order_review").on(
-      "click",
-      "#payment_method_zippy_antom_payment",
-      function () {
-        if ($(this).is(":checked")) {
-          antomInstance.create(); // Mount the checkout component
-        } else {
-          antomInstance.remove(); // Unmount the checkout component
-        }
-      }
-    );
+  function pollPaymentStatus() {
+    const order_id = $("#antom_order_id_pending").val()?.trim();
+    if (!order_id) return;
+
+    const antomInstance = new Antom();
+    antomInstance.showLoading();
+    antomInstance.pollPaymentStatus(order_id);
   }
 });

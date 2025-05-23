@@ -114,13 +114,18 @@ class ZIPPY_Pay_Core
 
   public static function get_domain_name()
   {
-    $original_url = "https://" . $_SERVER['SERVER_NAME'];
-    $pieces = parse_url($original_url);
-    $domain = isset($pieces['host']) ? $pieces['host'] : '';
-    if (preg_match('/(?P<domain>[a-z0-9][a-z0-9\-]{1,63}\.[a-z\.]{2,6})$/i', $domain,    $regs)) {
-      $domain = strstr($regs['domain'], '.', true);
+    $host = $_SERVER['SERVER_NAME'];
+    $parts = explode('.', $host);
+    $count = count($parts);
+
+    if ($count > 2) {
+
+      array_pop($parts);
+      array_pop($parts);
+      return implode('.', $parts);
     }
-    return $domain;
+
+    return $parts[0];
   }
 
   /**
@@ -203,5 +208,26 @@ class ZIPPY_Pay_Core
     $version = time();
 
     wp_enqueue_style('zippy-css-checkout', ZIPPY_PAY_DIR_URL . 'includes/assets/dist/css/web.min.css', [], $version);
+  }
+
+  public static function  pr($data)
+  {
+    echo '<style>
+  #debug_wrapper {
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    z-index: 999;
+    background: #fff;
+    color: #000;
+    overflow: auto;
+    width: 100%;
+    height: 100%;
+  }</style>';
+    echo '<div id="debug_wrapper"><pre>';
+
+    print_r($data); // or var_dump($data);
+    echo "</pre></div>";
+    die;
   }
 }

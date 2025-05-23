@@ -1,35 +1,148 @@
 import { AMSCheckoutPage } from "@alipay/ams-checkout";
+import { webApi } from "./api";
 
 class Antom {
   constructor() {
+    this.maxAttempts = 5;
+    this.retryDelay = 3000;
+    this.$loadingIndicator = $("#zippy_antom_loader");
+    this.$antom_error = $("#antom_error");
+
     this.checkoutApp = new AMSCheckoutPage({
-      environment: "sandbox",
+      environment: "prod",
       locale: "en_US",
-      onLog: ({ code, message }) => {
-        console.log("Log:", code, message);
-      },
-      onError: ({ code, result }) => {
-        console.log("Error:", code, result);
-      },
-      onEventCallback: ({ code, message }) => {
-        console.log("Event:", code, message);
-      },
+      onLog: this.handleLog,
+      onError: this.handleError,
+      onEventCallback: this.onEventCallback.bind(this),
     });
   }
 
-  async create(paymentSessionData) {
+  handleLog({ code, message }) {
+    console.log("Log:", code, message);
+  }
+
+  handleError({ code, result }) {
+    console.error("SDK Error:", code, result);
+  }
+
+  async getPaymentSessionData(orderId) {
+    try {
+      const response = await webApi.createPaymentSession({ order_id: orderId });
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching payment session data:", error);
+      return null;
+    }
+  }
+
+  async checkPaymentTransaction(orderId) {
+    try {
+      const response = await webApi.checkPaymentTransaction({
+        order_id: orderId,
+      });
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching payment transaction data:", error);
+      return null;
+    }
+  }
+
+  async create(orderId) {
+    const paymentSessionData = await this.getPaymentSessionData(orderId);
+    if (!paymentSessionData?.data?.data?.paymentSessionData) {
+      console.error("Payment session data missing.");
+      this.showError();
+      return;
+    }
+
     await this.checkoutApp.mountComponent(
-      {
-        sessionData:
-          "fgvDCbylmwqYTxztMce0EZk64QnfrlJOHSGCN4sNoLcYCzroH2pl8I9xErwOb/YerW96P3JLUG9VQOyTKQBrmg==&&SG&&111&&eyJleHRlbmRJbmZvIjoie1wiT1BFTl9NVUxUSV9QQVlNRU5UX0FCSUxJVFlcIjpcInRydWVcIixcImRpc3BsYXlBbnRvbUxvZ29cIjpcImZhbHNlXCJ9IiwicGF5bWVudFNlc3Npb25Db25maWciOnsicGF5bWVudE1ldGhvZENhdGVnb3J5VHlwZSI6IkFMTCIsInByb2R1Y3RTY2VuZSI6IkNIRUNLT1VUX1BBWU1FTlQiLCJwcm9kdWN0U2NlbmVWZXJzaW9uIjoiMS4wIn0sInBheW1lbnRTZXNzaW9uRmFjdG9yIjp7ImV4dGVuZEluZm8iOnsibWVyY2hhbnRDYXBhYmlsaXRpZXMiOlsic3VwcG9ydHMzRFMiXSwic3VwcG9ydGVkTmV0d29ya3MiOlsiTUFTVEVSQ0FSRCIsIlZJU0EiXX0sImV4dGVybmFsUmlza1RpbWVvdXQiOjAsIm1lcmNoYW50SW5mbyI6eyJpbnN0TWlkIjoibWVyY2hhbnQuY29tLmFudG9tLmNoZWNrb3V0LnByb2QiLCJtZXJjaGFudE5hbWUiOiJNZXJjaGFudCIsInBhcnRuZXJJZCI6IjIxMTExMjAwMDE3MTY1RDYiLCJyZWdpc3RlcmVkQ291bnRyeSI6IlNHIn0sIm9yZGVyIjp7Im9yZGVyRGVzY3JpcHRpb24iOiJQVV8yODAyMjAyNV9RUi01MyJ9LCJwYXltZW50QW1vdW50Ijp7ImN1cnJlbmN5IjoiU0dEIiwiY3VycmVuY3lEaXZpZGVyIjoiICIsImN1cnJlbmN5TGFiZWwiOiIkIiwiY3VycmVuY3lTeW1ib2xQb3NpdGlvbiI6IkwiLCJmb3JtYXR0ZWRWYWx1ZSI6IjUuMjYiLCJ2YWx1ZSI6IjUuMjYifSwicGF5bWVudE1ldGhvZEluZm8iOnsicGF5bWVudE1ldGhvZFR5cGUiOiJBUFBMRVBBWSJ9fSwic2VjdXJpdHlDb25maWciOnsiYXBwSWQiOiIiLCJhcHBOYW1lIjoiT25lQWNjb3VudCIsImJpelRva2VuIjoiNlRjZGJyMnJGM3JQWXg0aGtWckhxYnZqIiwiZ2F0ZXdheSI6Imh0dHBzOi8vaW1ncy1zZWEuYWxpcGF5LmNvbS9tZ3cuaHRtIiwiaDVnYXRld2F5IjoiaHR0cHM6Ly9vcGVuLXNlYS1nbG9iYWwuYWxpcGF5LmNvbS9hcGkvb3Blbi9yaXNrX2NsaWVudCIsIndvcmtTcGFjZUlkIjoiIn0sInNraXBSZW5kZXJQYXltZW50TWV0aG9kIjpmYWxzZX0=",
-      },
+      { sessionData: paymentSessionData.data.data.paymentSessionData },
       "#zippy_antom"
     );
+  }
+
+  showLoading() {
+    this.$loadingIndicator.addClass("show-loading");
+  }
+
+  hideLoading() {
+    this.$loadingIndicator.removeClass("show-loading");
+  }
+
+  showError() {
+    console.error("🚨 Antom Checkout encountered an error.");
+    this.$antom_error.addClass("show-error");
+    this.hideLoading();
   }
 
   async remove() {
     this.checkoutApp.unmount();
   }
+
+  async pollPaymentStatus(orderId, attempt = 1) {
+    try {
+      const response = await webApi.pollPaymentTransaction({
+        "wc-api": "wc_zippy_antom_redirect",
+        order_id: orderId,
+      });
+      if (attempt > this.maxAttempts) {
+        console.warn("❌ Max retries reached, stopping payment checks.");
+        this.hideLoading();
+        this.showError();
+        window.location.href = response?.data?.redirect_url;
+        return;
+      }
+      // this.showLoading();
+      if (response?.data?.data?.paymentStatus === "SUCCESS") {
+        console.log("✅ Payment Successful!");
+        window.location.href = response?.data?.redirect_url;
+        return;
+      }
+      setTimeout(
+        () => this.pollPaymentStatus(orderId, attempt + 1),
+        this.retryDelay
+      );
+    } catch (error) {
+      console.error(`⚠️ Error in attempt ${attempt}:`, error);
+      setTimeout(
+        () => this.pollPaymentStatus(orderId, attempt + 1),
+        this.retryDelay
+      );
+    }
+  }
+
+  onEventCallback({ code, result }) {
+    switch (code) {
+      case "SDK_PAYMENT_SUCCESSFUL":
+      case "SDK_PAYMENT_PROCESSING":
+      case "SDK_PAYMENT_CANCEL":
+        console.log("Payment Processing:", result);
+        this.handleSuccessfulPayment();
+        break;
+      case "SDK_PAYMENT_FAIL":
+      case "SDK_PAYMENT_ERROR":
+        console.error("Payment Error:", result);
+        this.remove();
+        this.showError();
+        break;
+      case "SDK_END_OF_LOADING":
+        console.log("SDK loading ended.");
+        this.handleSuccessfulPayment();
+        break;
+      default:
+        console.warn("Unhandled SDK event:", code);
+        break;
+    }
+  }
+  
+
+  handleSuccessfulPayment() {
+    let currentUrl = new URL(window.location.href);
+    let redirectPage = currentUrl.origin + "/antom-payment/pending";
+    window.location.replace(redirectPage);
+  }
 }
 
 export default Antom;
+
+

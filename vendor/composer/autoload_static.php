@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInit1efa9256d5eb097a36f265d36bd6c0dc
+class ComposerStaticInit045658d81f6d9d3243e731dda7bf04d1
 {
     public static $files = array (
         '7b11c4dc42b3b3023073cb14e519683c' => __DIR__ . '/..' . '/ralouphie/getallheaders/src/getallheaders.php',
@@ -15,13 +15,8 @@ class ComposerStaticInit1efa9256d5eb097a36f265d36bd6c0dc
     public static $prefixLengthsPsr4 = array (
         'P' => 
         array (
-            'Psr\\Log\\' => 8,
             'Psr\\Http\\Message\\' => 17,
             'Psr\\Http\\Client\\' => 16,
-        ),
-        'M' => 
-        array (
-            'Monolog\\' => 8,
         ),
         'G' => 
         array (
@@ -29,29 +24,17 @@ class ComposerStaticInit1efa9256d5eb097a36f265d36bd6c0dc
             'GuzzleHttp\\Promise\\' => 19,
             'GuzzleHttp\\' => 11,
         ),
-        'A' => 
-        array (
-            'Adyen\\' => 6,
-        ),
     );
 
     public static $prefixDirsPsr4 = array (
-        'Psr\\Log\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/psr/log/Psr/Log',
-        ),
         'Psr\\Http\\Message\\' => 
         array (
-            0 => __DIR__ . '/..' . '/psr/http-message/src',
-            1 => __DIR__ . '/..' . '/psr/http-factory/src',
+            0 => __DIR__ . '/..' . '/psr/http-factory/src',
+            1 => __DIR__ . '/..' . '/psr/http-message/src',
         ),
         'Psr\\Http\\Client\\' => 
         array (
             0 => __DIR__ . '/..' . '/psr/http-client/src',
-        ),
-        'Monolog\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/monolog/monolog/src/Monolog',
         ),
         'GuzzleHttp\\Psr7\\' => 
         array (
@@ -65,10 +48,6 @@ class ComposerStaticInit1efa9256d5eb097a36f265d36bd6c0dc
         array (
             0 => __DIR__ . '/..' . '/guzzlehttp/guzzle/src',
         ),
-        'Adyen\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/adyen/php-api-library/src/Adyen',
-        ),
     );
 
     public static $classMap = array (
@@ -78,9 +57,9 @@ class ComposerStaticInit1efa9256d5eb097a36f265d36bd6c0dc
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInit1efa9256d5eb097a36f265d36bd6c0dc::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInit1efa9256d5eb097a36f265d36bd6c0dc::$prefixDirsPsr4;
-            $loader->classMap = ComposerStaticInit1efa9256d5eb097a36f265d36bd6c0dc::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInit045658d81f6d9d3243e731dda7bf04d1::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInit045658d81f6d9d3243e731dda7bf04d1::$prefixDirsPsr4;
+            $loader->classMap = ComposerStaticInit045658d81f6d9d3243e731dda7bf04d1::$classMap;
 
         }, null, ClassLoader::class);
     }

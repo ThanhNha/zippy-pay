@@ -8,7 +8,7 @@ class ZIPPY_Antom_Scheduler
 {
 
   const HOOK_NAME = 'zippy_check_antom_payment_task';
-  const MAX_RETRIES = 60;
+  const MAX_RETRIES = 40;
   const RETRY_INTERVAL = 10; // Retry every 10 seconds
 
   /**

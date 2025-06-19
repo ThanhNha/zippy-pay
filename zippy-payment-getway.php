@@ -45,7 +45,7 @@ define('PAYMENT_PAYNOW_ID', 'zippy_paynow_payment');
 define('PAYMENT_ANTOM_ID', 'zippy_antom_payment');
 
 if (!class_exists(\Composer\Autoload\ClassLoader::class)) {
-  require_once EPOS_CRM_DIR_PATH . 'vendor/autoload.php';
+  require_once ZIPPY_PAY_DIR_PATH . 'vendor/autoload.php';
 }
 require_once ZIPPY_PAY_DIR_PATH . '/includes/autoload.php';
 

@@ -2,7 +2,7 @@
 
 namespace ZIPPY_Pay\Src\Antom;
 
-use WC_Order_Factory;
+use WC_Order;
 use ZIPPY_Pay\Core\ZIPPY_Pay_Core;
 
 use GuzzleHttp\Client;
@@ -123,6 +123,9 @@ class ZIPPY_Antom_Api
 
   private function buildSessionPayload($order_id)
   {
+    require_once ZIPPY_PAY_DIR_PATH . '../woocommerce/includes/wc-order-functions.php';
+
+    $order = new WC_Order($order_id);
     $data = array(
       'OrderId' => $order_id,
       'CustomerId' => ZIPPY_Pay_Core::get_domain_name(),
@@ -131,7 +134,7 @@ class ZIPPY_Antom_Api
         'wc-api'      => 'zippy_antom_redirect',
         'order_id'     => $order_id
       ), home_url('/'))),
-      'Currency' => "SGD"
+      'Currency' => $order->get_currency()
     );
     return $data;
   }

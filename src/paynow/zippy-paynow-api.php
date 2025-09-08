@@ -5,6 +5,7 @@ namespace ZIPPY_Pay\Src\Paynow;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ConnectException;
 use GuzzleHttp\Exception\RequestException;
+use ZIPPY_Pay\Src\Logs\ZIPPY_Pay_Logger;
 
 class ZIPPY_Paynow_Api
 {
@@ -117,7 +118,7 @@ class ZIPPY_Paynow_Api
     try {
       $response = $this->client->get(
         "v1/payment/paynow/transaction",
-        ['query' => ['merchantId' => $merchant_id, 'orderId' => $order_id,'amount' => $amount]]
+        ['query' => ['merchantId' => $merchant_id, 'orderId' => $order_id, 'amount' => $amount]]
       );
       $statusCode = $response->getStatusCode();
       if ($statusCode === 200) {
@@ -127,13 +128,19 @@ class ZIPPY_Paynow_Api
           'status' => $statusCode,
           'message' => $this->errorMessage,
         );
+        $payload = ['merchantId' => $merchant_id, 'orderId' => $order_id, 'amount' => $amount];
+        ZIPPY_Pay_Logger::log_checkout($this->errorMessage, $payload);
       }
     } catch (ConnectException $e) {
+      $payload = ['merchantId' => $merchant_id, 'orderId' => $order_id, 'amount' => $amount];
+      ZIPPY_Pay_Logger::log_checkout($e->getMessage(), $payload);
       $response = array(
         'status' => false,
         'message' => 'Connection timed out. Please try again later.',
       );
     } catch (RequestException $e) {
+      $payload = ['merchantId' => $merchant_id, 'orderId' => $order_id, 'amount' => $amount];
+      ZIPPY_Pay_Logger::log_checkout($e->getMessage(), $payload);
       $response = array(
         'status' => $e->getResponse()->getStatusCode(),
         'message' => $this->errorMessage,

@@ -125,7 +125,6 @@ class ZIPPY_Antom_Api
   {
     require_once ZIPPY_PAY_DIR_PATH . '../woocommerce/includes/wc-order-functions.php';
 
-    $order = new WC_Order($order_id);
     $data = array(
       'OrderId' => $order_id,
       'CustomerId' => ZIPPY_Pay_Core::get_domain_name(),
@@ -134,7 +133,7 @@ class ZIPPY_Antom_Api
         'wc-api'      => 'zippy_antom_redirect',
         'order_id'     => $order_id
       ), home_url('/'))),
-      'Currency' => $order->get_currency()
+      'Currency' => $this->order->get_currency()
     );
     return $data;
   }

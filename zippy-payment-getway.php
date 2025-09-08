@@ -49,7 +49,7 @@ if (!class_exists(\Composer\Autoload\ClassLoader::class)) {
 }
 require_once ZIPPY_PAY_DIR_PATH . '/includes/autoload.php';
 
-add_action('zippy_check_antom_payment_task', [ZIPPY_Antom_Scheduler::class, 'process_order'], 10, 1);
+add_action('zippy_check_antom_payment_task', [ZIPPY_Antom_Scheduler::class, 'process_order'], 10, 2);
 
 add_filter('cron_schedules', function ($schedules) {
   $schedules['zippy_antom_every_minute'] = [

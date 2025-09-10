@@ -25,6 +25,7 @@ use ZIPPY_Pay\Settings\Zippy_Pay_Ajax_Handle;
 use ZIPPY_Pay\Core\ZIPPY_Pay_Core;
 use ZIPPY_Pay\Src\Woocommerce\Zippy_Woo_Template;
 use ZIPPY_Pay\Src\Antom\ZIPPY_Antom_Scheduler;
+use ZIPPY_Pay\Src\Paynow\ZIPPY_Paynow_Scheduler;
 
 
 /* Set constant enpoint to the plugin directory. */
@@ -50,9 +51,14 @@ if (!class_exists(\Composer\Autoload\ClassLoader::class)) {
 require_once ZIPPY_PAY_DIR_PATH . '/includes/autoload.php';
 
 add_action('zippy_check_antom_payment_task', [ZIPPY_Antom_Scheduler::class, 'process_order'], 10, 2);
+add_action('zippy_check_paynow_payment_task', [ZIPPY_Paynow_Scheduler::class, 'process_order'], 10, 2);
 
 add_filter('cron_schedules', function ($schedules) {
   $schedules['zippy_antom_every_minute'] = [
+    'interval' => 15, // 60 seconds (1 minute)
+    'display'  => __('Every Minute'),
+  ];
+  $schedules['zippy_paynow_every_minute'] = [
     'interval' => 15, // 60 seconds (1 minute)
     'display'  => __('Every Minute'),
   ];

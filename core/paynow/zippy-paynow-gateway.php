@@ -7,6 +7,8 @@ use WC_Order;
 use ZIPPY_Pay\Core\ZIPPY_Pay_Core;
 use ZIPPY_Pay\Src\Paynow\ZIPPY_Paynow_Api;
 use ZIPPY_Pay\Src\Paynow\ZIPPY_Paynow_Payment;
+use ZIPPY_Pay\Src\Paynow\ZIPPY_Paynow_Scheduler;
+
 
 
 defined('ABSPATH') || exit;
@@ -129,6 +131,9 @@ class ZIPPY_Paynow_Gateway extends WC_Payment_Gateway
 			return $this->handle_payment_failed();
 		}
 
+		$scheduler = new ZIPPY_Paynow_Scheduler();
+		$scheduler->schedule_order_processing($order_id);
+
 		update_option('zippy_paynow_redirect_object_' . $order_id, $paynow_response);
 
 		return  [
@@ -147,7 +152,10 @@ class ZIPPY_Paynow_Gateway extends WC_Payment_Gateway
 		$redirectData = get_option('zippy_paynow_redirect_object_' . $order_id);
 
 		if (!isset($redirectData) || empty($redirectData)) {
+
+
 			wp_safe_redirect(get_checkout_payment_url(), '301');
+
 			$this->add_notice();
 		}
 
@@ -203,7 +211,7 @@ class ZIPPY_Paynow_Gateway extends WC_Payment_Gateway
 
 		$api = new ZIPPY_Paynow_Api();
 
-		$status = $api->checkStatusOrder($merchant_id, $order_id , $amount);
+		$status = $api->checkStatusOrder($merchant_id, $order_id, $amount);
 
 		return $this->check_order_status($status, $order);
 	}

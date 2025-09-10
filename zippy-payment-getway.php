@@ -3,7 +3,7 @@
  * Plugin Name:       Zippy Pay
  * Plugin URI:        https://zippy.sg/
  * Description:       Accept adyen payments on your WooCommerce shop
- * Version:           4.0.0
+ * Version:           5.0.0
  * WC requires at least: 3.0
  * WC tested up to: 6.7
  * Author:            Zippy
@@ -45,11 +45,11 @@ define('PAYMENT_PAYNOW_ID', 'zippy_paynow_payment');
 define('PAYMENT_ANTOM_ID', 'zippy_antom_payment');
 
 if (!class_exists(\Composer\Autoload\ClassLoader::class)) {
-  require_once EPOS_CRM_DIR_PATH . 'vendor/autoload.php';
+  require_once ZIPPY_PAY_DIR_PATH . 'vendor/autoload.php';
 }
 require_once ZIPPY_PAY_DIR_PATH . '/includes/autoload.php';
 
-add_action('zippy_check_antom_payment_task', [ZIPPY_Antom_Scheduler::class, 'process_order'], 10, 1);
+add_action('zippy_check_antom_payment_task', [ZIPPY_Antom_Scheduler::class, 'process_order'], 10, 2);
 
 add_filter('cron_schedules', function ($schedules) {
   $schedules['zippy_antom_every_minute'] = [

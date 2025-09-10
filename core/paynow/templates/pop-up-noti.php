@@ -23,7 +23,7 @@
           <img src="<?php echo ZIPPY_PAY_DIR_URL . 'includes/assets/icons/paynow_instruction_1.svg' ?>" alt="paynow_instruction_0">
         </div>
         <div class="item-content">
-          <p class="content-text">Press &amp; hold the QR image and save to phone gallery</p>
+          <p class="content-text">Upload QR to your preferred Paynow app for payment</p>
 
         </div>
       </div>

@@ -24,6 +24,7 @@ class ZIPPY_Settings_Api
     self::$client = new Client([
       'base_uri' => 'https://rest.zippy.sg/',
       'timeout'  => 6,
+       'verify' => false,
     ]);
   }
   public static function GetConfigs()

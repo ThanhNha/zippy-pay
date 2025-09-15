@@ -19,6 +19,7 @@ class ZIPPY_Paynow_Api
   {
     $this->client = new Client([
       'base_uri' => 'https://rest.zippy.sg/',
+      
       'headers' => [
         'Content-Type' => 'application/json',
       ],

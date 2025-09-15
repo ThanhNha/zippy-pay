@@ -47,6 +47,7 @@ class ZIPPY_Antom_Api
       'base_uri' => $this->base_uri,
       'timeout'  => 30,
       'headers'  => $headers,
+      'verify' => false,
     ]);
 
     $data = $this->buildSessionPayload($order_id);
@@ -79,6 +80,7 @@ class ZIPPY_Antom_Api
       'base_uri' => $this->base_uri,
       'timeout'  => 30,
       'headers'  => $headers,
+      'verify' => false,
     ]);
 
     $data = $this->buildValidateTransactionPayload($order_id);
@@ -106,6 +108,7 @@ class ZIPPY_Antom_Api
     $client = new Client([
       'base_uri' =>  home_url(),
       'timeout'  => 30,
+      'verify' => false,
       'headers'  => ['Content-Type' => 'application/json'],
     ]);
 

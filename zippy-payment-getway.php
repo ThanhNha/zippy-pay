@@ -2,8 +2,8 @@
 /* @wordpress-plugin
  * Plugin Name:       Zippy Pay
  * Plugin URI:        https://zippy.sg/
- * Description:       Accept adyen payments on your WooCommerce shop
- * Version:           5.0.0
+ * Description:       Accept Paynow payments, Antom Payment on your WooCommerce shop
+ * Version:           5.0.1
  * WC requires at least: 3.0
  * WC tested up to: 6.7
  * Author:            Zippy
